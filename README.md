@@ -1,4 +1,7 @@
 # Quarkus Discord4J
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Version](https://img.shields.io/maven-central/v/io.quarkiverse.discord4j/quarkus-discord4j?logo=apache-maven&style=for-the-badge)](https://search.maven.org/artifact/io.quarkiverse.discord4j/quarkus-discord4j)
 
@@ -30,3 +33,24 @@ Please refer to the [extension documentation](https://quarkiverse.github.io/quar
 
 ## Examples
 > Does your Discord bot use this extension? Please open a PR and add it here!
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/cameronprater"><img src="https://avatars.githubusercontent.com/u/40479627?v=4?s=100" width="100px;" alt="cameronprater"/><br /><sub><b>cameronprater</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-discord4j/commits?author=cameronprater" title="Code">💻</a> <a href="#maintenance-cameronprater" title="Maintenance">🚧</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
