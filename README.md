@@ -1,6 +1,6 @@
 # Quarkus Discord4J
 
-[![Version](https://img.shields.io/maven-central/v/io.quarkiverse.discord4j/quarkus-discord4j?logo=apache-maven&style=flat-square)](https://search.maven.org/artifact/io.quarkiverse.discord4j/quarkus-discord4j)
+[![Version](https://img.shields.io/maven-central/v/io.quarkiverse.discord4j/quarkus-discord4j?logo=apache-maven&style=for-the-badge)](https://search.maven.org/artifact/io.quarkiverse.discord4j/quarkus-discord4j)
 
 Quarkus Discord4J is an experimental [Quarkus](https://quarkus.io) extension which allows you to develop a WebSocket-based (Gateway) Discord bot using the [Discord4J](https://github.com/Discord4J/Discord4J) library with minimal boilerplate.
 
