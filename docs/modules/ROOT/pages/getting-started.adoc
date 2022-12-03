@@ -1,0 +1,110 @@
+= Getting Started
+
+include::./includes/attributes.adoc[]
+
+Before you create your Quarkus Discord bot, you'll need to create a Discord developer application and spin up a new bot user. If you already have a Discord bot set up, skip to xref:installation[Installation] to start experimenting.
+
+== Create a Discord bot user
+
+=== Step 1 - Create a developer app
+
+Create a new Discord developer application by going to the https://discord.com/developers/applications[Discord developer portal] and clicking `New Application`.
+
+TIP: As each Discord app can only have one bot user, it's a good idea to create two separate apps so that you can create separate bots for development and production.
+
+=== Step 2 - Create a bot user
+
+You can create a bot by going to `Bot` and clicking the `Add Bot` button. After your bot has appeared, be sure to copy the token and set it aside for later so that you can configure your Quarkus app.
+
+IMPORTANT: Be sure to uncheck the `Public Bot` if you don't want other users to be able to add your bot to their server.
+
+IMPORTANT: If you plan to listen for and read messages in servers, you should check the `Message Content Intent` option.
+
+=== Step 3 - Add your bot to a server
+
+Go to `OAuth2` > `URL Generator` and select the `bot` scope. For a bot, you won't require any other scopes unless you plan to register application commands, then you'll need the `applications.commands` scope.
+
+Now you can select any permissions your bot needs. You can grant more permissions to your bot later in your own server, but for public bots, it's important that your generated URL has the correct permissions that it needs to function.
+
+Once you're done selecting permissions, go to the generated URL and add your bot to a server.
+
+IMPORTANT: You should add your bot to a server that only you're in until you're done developing. This is because incoming Gateway events from activity in the server can trigger live reload in dev mode.
+
+== [[installation]]Installation
+
+To create a Quarkus Discord bot, you need Quarkus. You can create a Quarkus application with the Quarkus Discord4J extension using Maven:
+[source,bash,subs=attributes+]
+----
+mvn io.quarkus:quarkus-maven-plugin:{quarkus-version}:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=my-discord-bot \
+    -Dextensions="io.quarkiverse.discord4j:quarkus-discord-bot:{quarkus-discord4j-version}"
+----
+
+Alternatively, just add the Quarkus Discord4J dependency to your existing Quarkus application:
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.discord4j</groupId>
+    <artifactId>quarkus-discord4j</artifactId>
+    <version>{quarkus-discord4j-version}</version>
+</dependency>
+----
+
+Or, you can bootstrap a new Quarkus app using Gradle from https://code.quarkus.io.
+
+== Configure your bot
+
+You can configure your bot in any of the ways that Quarkus supports. See the link:{quarkus-guides}/config-reference[Configuration reference guide] for more information.
+
+Because we have a token that we don't want to commit, let's use a `.env`
+file:
+[source,properties]
+----
+QUARKUS_DISCORD4J_TOKEN=<your bot token>
+QUARKUS_DISCORD4J_ENABLED_INTENTS=<set of enabled Gateway intents>
+----
+
+QUARKUS_DISCORD_BOT_TOKEN:: Your bot's token obtained from your app's `Bot` section in the Discord developer portal
+
+QUARKUS_DISCORD_BOT_GATEWAY_ENABLED_INTENTS:: The set of Gateway intents corresponding to the Gateway events you want your bot to receive
+
+== Start coding
+
+Now you can start coding and handling Gateway events.
+
+For example, create the following class:
+[source,java]
+----
+class AddReaction {
+    Mono<Void> onMessageCreate(@GatewayEvent MessageCreateEvent event) {
+        return event.getMessage().addReaction(ReactionEmoji.of("🤖"));
+    }
+}
+----
+
+Your bot will now react to each message sent in servers and via DM with 🤖.
+
+The method is called automatically each time your bot receives a `MessageCreateEvent`.
+
+== Start dev mode
+
+You can start dev mode to take advantage of live reload and improve productivity.
+
+Quarkus will automatically restart your application (and bot) when it detects code changes after receiving a Gateway event. The best part is that the event won't be sent to your code until _after_ your bot restarts, meaning you can test new code only when you're ready.
+
+TIP: It's a good idea to have a separate dev bot and server for this reason. If your dev bot is in multiple servers, someone else can trigger live reload by sending a message when you're not ready. A separate server allows you to be in control of when live reload is triggered.
+
+Just execute the following command to run Quarkus in dev mode:
+[source,bash]
+----
+./mvnw quarkus:dev
+----
+
+== Next steps
+
+From here, you can do whatever you want with your bot by observing any of the supported Gateway events. You can also use all the extensions and other goodies that Quarkus has to offer.
+
+When you're done developing your bot, it might be a good idea to generate a native executable so you can benefit from a reduced memory footprint and a faster startup time in production.
+
+More information about these features (and more) can be found in the xref:reference.adoc[Reference].

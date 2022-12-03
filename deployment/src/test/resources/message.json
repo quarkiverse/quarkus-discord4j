@@ -1,0 +1,15 @@
+{
+  "id": "0",
+  "channel_id": "0",
+  "author": {
+    "id": "0",
+    "username": "",
+    "discriminator": ""
+  },
+  "content": "",
+  "timestamp": "",
+  "tts": false,
+  "mention_everyone": false,
+  "pinned": false,
+  "type": 0
+}

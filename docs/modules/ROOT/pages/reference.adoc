@@ -1,0 +1,97 @@
+= Reference
+
+include::./includes/attributes.adoc[]
+
+== Preamble
+
+You should be somewhat familiar with the https://quarkus.io[Quarkus framework] before creating your Quarkus Discord bot. Quarkus has extensive documentation at {quarkus-guides} to help you get started.
+
+Additionally, the https://docs.discord4j.com[Discord4J documentation] and the https://discord.com/developers/docs/topics/gateway#commands-and-events-gateway-events[Discord API Gateway event documentation] are essential resources to have on hand.
+
+TIP: Discord4J uses https://projectreactor.io[Project Reactor] as its reactive framework instead of Mutiny, the reactive layer most Quarkus users will be familiar with. For this reason, reactive listener methods support returning `Mono` instead of `Uni` and `Flux` instead of `Multi`, but you can still https://smallrye.io/smallrye-mutiny/latest/guides/converters/#integration-with-project-reactor[convert your Reactor streams into Mutiny streams] if you want.
+
+The https://projectreactor.io/docs/core/release/reference/#which-operator[Choosing an Operator guide] might be useful to you if you don't want to convert your streams.
+
+== Events
+
+=== Listening to events
+
+To listen to Gateway events, simply declare a method with an event type parameter and annotate it with `@GatewayEvent`. The method can return `Mono`, `Uni`, `Flux`, or `Multi`.
+
+Here's an example of an imperative listener method:
+
+[source,java]
+----
+class AddReaction {
+    Mono<Void> onMessageCreate(@GatewayEvent MessageCreateEvent event) {
+        return event.getMessage().addReaction(ReactionEmoji.of("🤖"));
+    }
+}
+----
+
+A few details about Gateway listener methods:
+
+* The declaring class and method can be public, protected, or package private
+* The declaring class has to be a concrete class
+* The method should be concrete
+* The annotated event must be the first parameter
+
+=== Event types
+
+All the currently supported event types can be found by checking out the subclasses of the link:{discord4j-javadoc-url}/event/domain/Event.html[Event class].
+
+== Bean injection
+
+=== Gateway client
+
+You can inject a link:{discord4j-javadoc-url}/GatewayDiscordClient.html[`GatewayDiscordClient`] bean that exposes high level methods to manage Discord resources via REST, access the underlying entity cache, and manage your bot's connection to the Gateway and Voice Gateway.
+
+NOTE: This usually isn't necessary as each Discord4J event exposes the Gateway client via `Event#getClient()`, and you can manage most resources directly from its corresponding entity instance.
+
+An example:
+[source,java]
+----
+@ApplicationScoped
+class MyBean {
+    @Inject
+    GatewayDiscordClient gateway;
+
+    // do something with gateway
+}
+----
+
+=== Into methods
+
+Any method that listens to a Gateway event can inject beans as additional parameters.
+
+For example:
+[source,java]
+----
+class DeletePersistentMessage {
+    Mono<Void> onMessageDelete(@GatewayEvent MessageDeleteEvent event, EntityManager em) {
+        // do something with em
+    }
+}
+----
+
+== Metrics
+
+If your Quarkus app uses a metrics extension like link:{quarkus-guides}/micrometer[Micrometer] or link:{quarkus-guides}/smallrye-metrics[SmallRye Metrics], you can enable metrics collection for your bot exposed at the `/q/metrics` endpoint by setting the configuration property `quarkus.discord4j.metrics.enabled` to true.
+
+Currently, metrics are collected for the number of servers your bot is in and the number of voice channels your bot is in.
+
+== Health check
+
+A readiness health check for your bot is automatically exposed at the `/q/health/ready` endpoint if your Quarkus app depends on link:{quarkus-guides}/smallrye-health[SmallRye Health]. All of your bot's shards will be checked and the health status will be `DOWN` if any shard isn't connected.
+
+You can disable the health check by setting `quarkus.discord4j.health.enabled` to false.
+
+== Native executable
+
+You can package your Discord bot into a native executable with GraalVM or Mandrel to reduce its memory footprint and speed up its boot time. See the https://quarkus.io/guides/building-native-image[Building a native executable guide] for more information.
+
+== Configuration
+
+You can configure the following properties:
+
+include::includes/quarkus-discord4j.adoc[]

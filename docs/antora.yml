@@ -1,0 +1,5 @@
+name: quarkus-discord4j
+title: Quarkus Discord4J
+version: dev
+nav:
+  - modules/ROOT/nav.adoc

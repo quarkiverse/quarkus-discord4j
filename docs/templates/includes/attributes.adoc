@@ -1,0 +1,7 @@
+:quarkus-version: ${quarkus.version}
+:quarkus-discord4j-version: ${release.current-version}
+
+:quarkus-guides: https://quarkus.io/guides
+:discord4j-javadoc-url: https://javadoc.io/doc/com.discord4j/discord4j-core/latest/discord4j/core
+
+:examples-dir: ./../examples/

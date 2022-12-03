@@ -1,0 +1,330 @@
+
+:summaryTableId: quarkus-discord4j
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[quarkus-discord4j_configuration]]link:#quarkus-discord4j_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.health.enabled]]`link:#quarkus-discord4j_quarkus.discord4j.health.enabled[quarkus.discord4j.health.enabled]`
+
+[.description]
+--
+Whether a health check should be published for the Gateway clients managed by this extension if the quarkus-smallrye-health extension is present
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_HEALTH_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_HEALTH_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.metrics.enabled]]`link:#quarkus-discord4j_quarkus.discord4j.metrics.enabled[quarkus.discord4j.metrics.enabled]`
+
+[.description]
+--
+Whether metrics should be collected for the Gateway clients managed by this extension if the quarkus-micrometer or quarkus-smallrye-metrics extension is present
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_METRICS_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_METRICS_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.global-commands.overwrite-on-start]]`link:#quarkus-discord4j_quarkus.discord4j.global-commands.overwrite-on-start[quarkus.discord4j.global-commands.overwrite-on-start]`
+
+[.description]
+--
+Whether to serialize and register the JSON files found in `path` as global commands on startup.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_OVERWRITE_ON_START+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_OVERWRITE_ON_START+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.global-commands.path]]`link:#quarkus-discord4j_quarkus.discord4j.global-commands.path[quarkus.discord4j.global-commands.path]`
+
+[.description]
+--
+The path to the JSON files of the global commands.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`META-INF/commands`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.global-commands.delete-missing]]`link:#quarkus-discord4j_quarkus.discord4j.global-commands.delete-missing[quarkus.discord4j.global-commands.delete-missing]`
+
+[.description]
+--
+Whether to delete registered global commands whose JSON representation is not found in `path`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_DELETE_MISSING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_DELETE_MISSING+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.token]]`link:#quarkus-discord4j_quarkus.discord4j.token[quarkus.discord4j.token]`
+
+[.description]
+--
+The bot token used to authenticate to the Discord API.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_TOKEN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_TOKEN+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|required icon:exclamation-circle[title=Configuration property is required]
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.presence.status]]`link:#quarkus-discord4j_quarkus.discord4j.presence.status[quarkus.discord4j.presence.status]`
+
+[.description]
+--
+The status of the bot.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_PRESENCE_STATUS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_PRESENCE_STATUS+++`
+endif::add-copy-button-to-env-var[]
+-- a|
+`unknown`, `online`, `do-not-disturb`, `idle`, `invisible`, `offline` 
+|
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.enabled-intents]]`link:#quarkus-discord4j_quarkus.discord4j.enabled-intents[quarkus.discord4j.enabled-intents]`
+
+[.description]
+--
+The Gateway intents that should be enabled. Specific Gateway intents are required to receive certain Gateway events. Non-privileged intents will be enabled by default.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_ENABLED_INTENTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_ENABLED_INTENTS+++`
+endif::add-copy-button-to-env-var[]
+--|list of Intent 
+|
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.entity-retrieval-strategy]]`link:#quarkus-discord4j_quarkus.discord4j.entity-retrieval-strategy[quarkus.discord4j.entity-retrieval-strategy]`
+
+[.description]
+--
+The strategy to use for retrieving Discord entities. Default is `cache-fallback-rest`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_ENTITY_RETRIEVAL_STRATEGY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_ENTITY_RETRIEVAL_STRATEGY+++`
+endif::add-copy-button-to-env-var[]
+--|EntityRetrievalStrategy 
+|
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.sharding.count]]`link:#quarkus-discord4j_quarkus.discord4j.sharding.count[quarkus.discord4j.sharding.count]`
+
+[.description]
+--
+The number of shards that this bot should be split into.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_SHARDING_COUNT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_SHARDING_COUNT+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.sharding.indices]]`link:#quarkus-discord4j_quarkus.discord4j.sharding.indices[quarkus.discord4j.sharding.indices]`
+
+[.description]
+--
+Which shards from the configured number of shards that this bot will receive events from. The bot will receive events from all specified shards by default.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_SHARDING_INDICES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_SHARDING_INDICES+++`
+endif::add-copy-button-to-env-var[]
+--|list of int 
+|`0`
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.sharding.max-concurrency]]`link:#quarkus-discord4j_quarkus.discord4j.sharding.max-concurrency[quarkus.discord4j.sharding.max-concurrency]`
+
+[.description]
+--
+The number of shards that this bot will concurrently identify to the Gateway.
+
+[WARNING]
+===
+This property should only ever be configured if the bot is allowed to use
+https://discord.com/developers/docs/topics/gateway#sharding-for-very-large-bots[very large sharding].
+Otherwise, the bot will incur a rate limit when identifying to the Gateway.
+===
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_SHARDING_MAX_CONCURRENCY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_SHARDING_MAX_CONCURRENCY+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.overwrite-on-start]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.overwrite-on-start[quarkus.discord4j.guild-commands."guild-commands".overwrite-on-start]`
+
+[.description]
+--
+Whether to serialize and register the JSON files found in `path` as commands in this guild on startup.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__OVERWRITE_ON_START+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__OVERWRITE_ON_START+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.path]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.path[quarkus.discord4j.guild-commands."guild-commands".path]`
+
+[.description]
+--
+The path to the JSON files of the guild commands. By default, the path is `<global-commands.path> {plus} / {plus} <config-name>`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.delete-missing]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.delete-missing[quarkus.discord4j.guild-commands."guild-commands".delete-missing]`
+
+[.description]
+--
+Whether to delete commands registered in this guild whose JSON representation is not found in `path`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__DELETE_MISSING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__DELETE_MISSING+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.guild-id]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.guild-id[quarkus.discord4j.guild-commands."guild-commands".guild-id]`
+
+[.description]
+--
+The ID of the guild.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__GUILD_ID+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__GUILD_ID+++`
+endif::add-copy-button-to-env-var[]
+--|long 
+|`0l`
+
+
+h|[[quarkus-discord4j_quarkus.discord4j.presence.activity-activity-configuration]]link:#quarkus-discord4j_quarkus.discord4j.presence.activity-activity-configuration[Activity configuration]
+This configuration section is optional
+h|Type
+h|Default
+
+a| [[quarkus-discord4j_quarkus.discord4j.presence.activity.type]]`link:#quarkus-discord4j_quarkus.discord4j.presence.activity.type[quarkus.discord4j.presence.activity.type]`
+
+[.description]
+--
+The type of activity.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_PRESENCE_ACTIVITY_TYPE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_PRESENCE_ACTIVITY_TYPE+++`
+endif::add-copy-button-to-env-var[]
+-- a|
+`unknown`, `playing`, `streaming`, `listening`, `watching`, `custom`, `competing` 
+|required icon:exclamation-circle[title=Configuration property is required]
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.presence.activity.name]]`link:#quarkus-discord4j_quarkus.discord4j.presence.activity.name[quarkus.discord4j.presence.activity.name]`
+
+[.description]
+--
+The name of the activity.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_PRESENCE_ACTIVITY_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_PRESENCE_ACTIVITY_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|required icon:exclamation-circle[title=Configuration property is required]
+
+
+a| [[quarkus-discord4j_quarkus.discord4j.presence.activity.url]]`link:#quarkus-discord4j_quarkus.discord4j.presence.activity.url[quarkus.discord4j.presence.activity.url]`
+
+[.description]
+--
+The YouTube or Twitch URL of the stream, if the activity type is `streaming`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_PRESENCE_ACTIVITY_URL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_PRESENCE_ACTIVITY_URL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+|===

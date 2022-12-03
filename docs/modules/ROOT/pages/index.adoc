@@ -1,0 +1,9 @@
+= Quarkus Discord4J
+
+include::./includes/attributes.adoc[]
+
+Quarkus Discord4J is an extension to streamline the development of WebSocket-based (Gateway) https://discord.com[Discord] bots in Quarkus.
+
+Listen to Gateway events using annotations, generate a native executable, increase productivity with live reload, and more.
+
+Uses the https://github.com/Discord4J/Discord4J[Discord4J] library.

@@ -1,0 +1,24 @@
+{
+  "id": "0",
+  "application_id": "0",
+  "type": 2,
+  "data": {
+    "id": 0,
+    "name": "foo",
+    "type": 0,
+    "options": [
+      {
+        "name": "bar",
+        "type": 2,
+        "options": [
+          {
+            "name": "baz",
+            "type": 1
+          }
+        ]
+      }
+      ]
+  },
+  "token": "",
+  "version": 1
+}

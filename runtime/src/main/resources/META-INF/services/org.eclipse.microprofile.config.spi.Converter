@@ -1,0 +1,3 @@
+io.quarkiverse.discord4j.runtime.converter.ActivityTypeConverter
+io.quarkiverse.discord4j.runtime.converter.EntityRetrievalStrategyConverter
+io.quarkiverse.discord4j.runtime.converter.StatusConverter

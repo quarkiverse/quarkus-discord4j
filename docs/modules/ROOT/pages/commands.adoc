@@ -1,0 +1,115 @@
+= Application Commands
+
+include::./includes/attributes.adoc[]
+
+https://discord.com/developers/docs/interactions/application-commands[Application commands] are Discord's newest way of interacting with bots in Discord, replacing the traditional method of parsing out message content.
+
+It's possible to interface with application commands using Gateway listener methods, but the `quarkus-discord4j-commands` extension comes with some additional goodies that make it easy to develop application commands.
+
+== Installation
+
+Add the `quarkus-discord4j-commands` artifact to your Quarkus app:
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.discord4j</groupId>
+    <artifactId>quarkus-discord4j-commands</artifactId>
+    <version>{quarkus-discord4j-version}</version>
+</dependency>
+----
+
+== Creating commands
+
+Before you can start listening for commands in code, you first need to define your application commands and register them in Discord so they can be used. The easiest way to do this is by defining your commands using JSON. Quarkus Discord Bot will automatically serialize and register the JSON files found in `META-INF/commands` and subdirectories as application commands (when configured to do so).
+
+TIP: Discord supports two types of application commands: global commands and guild commands. Global commands take an hour to propagate after being registered, so it's recommended to register your commands as guild commands while you're developing.
+
+Let's create a guild command by creating the following JSON file in `META-INF/commands/test`:
+[source,json]
+----
+{
+  "name": "foo"
+  "description": "Foo command"
+  "options": [
+    {
+      "type": 3,
+      "name": "name",
+      "description": "The text to reply to the command with"
+    }
+  ]
+}
+----
+
+You can find the full JSON schema of application commands https://discord.com/developers/docs/interactions/application-commands#application-command-object[here].
+
+Now that you've created a guild command using JSON, you need to configure the ID of the guild command, and configure your Quarkus Discord Bot to register the command when your app starts. You can do that by configuring the following properties:
+[source,properties]
+----
+quarkus.discord4j.guild-commands.test.overwrite-on-start=true
+quarkus.discord4j.guild-commands.test.guild-id=<test guild ID>
+----
+
+The configuration name of the guild commands, `test`, must match the name of the subdirectory in `META-INF/commands` we created earlier.
+
+TIP: To obtain the ID of your test guild, turn on developer mode in your Discord client by going to `User Settings` > `App Settings` > `Advanced` and checking the `Developer Mode` option. Then, right click your server's icon and click `Copy ID`.
+
+You can find the full list of configurable properties in the xref:reference.adoc[Reference].
+
+== Listening and responding to commands
+
+To listen for the command you just defined, create the following class:
+[source,java]
+----
+class FooCommand {
+
+    @Command(value="foo", guild="test") // <1>
+    Mono<Void> onFoo(ChatInputInteractionEvent event) { // <2>
+        String name = event.getOption("name")
+                .flatMap(ApplicationCommandInteractionOption::getValue)
+                .map(ApplicationCommandInteractionOptionValue::asString)
+                .get(); // <3>
+
+        return event.reply(name); // <4>
+    }
+}
+----
+<1> The `guild` value indicates that we're listening to a guild command from the guild ID we configured under the name `test`. Simply omit the `guild` value if you want to listen for global commands.
+<2> Like Gateway listener methods, command methods can return `Mono`, `Uni`, `Flux`, or `Multi`.
+<3> Here, we extract the value of the `name` option passed to our `foo` command.
+<4> When we receive a command, we have to acknowledge it. Here, we acknowledge the command by immediately replying.
+
+NOTE: It is planned to allow option values to be injected directly into command methods in the future.
+
+=== Subcommands and subcommand groups
+
+You can listen for subcommands and subcommand groups using a slightly different class hierarchy. Let's imagine the command we defined earlier includes subcommands and subcommand groups, and create the following class for it:
+[source,java]
+----
+@Command(value="foo", guild="test")
+class FooCommands {
+
+    @SubCommand("baz") // <1>
+    Mono<Void> onBaz(ChatInputInteractionEvent event) {
+        // acknowledge command
+    }
+
+    @SubCommandGroup("bar")
+    class BarCommands {
+
+        @SubCommand("baz") // <2>
+        Mono<Void> onBaz(ChatInputInteractionEvent event) {
+            // acknowledge command
+        }
+    }
+}
+----
+<1> We listen for `/foo baz` commands
+<2> We listen for `/foo bar baz` commands
+
+=== User and message commands
+
+To listen for user or message commands, methods annotated with `@Command` can declare a parameter of `UserInteractionEvent` or `MessageInteractionEvent`. Subcommands and subcommand groups aren't supported for user and message commands.
+
+=== Autocomplete commands
+
+To listen for autocomplete interactions, methods annotated with `@Command` or `@SubCommand` can declare a parameter of `ChatInputAutoCompleteEvent`.
