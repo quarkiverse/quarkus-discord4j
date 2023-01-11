@@ -29,7 +29,7 @@
     <maven.compiler.release>11</maven.compiler.release>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
 
-    <quarkus.version>2.14.2.Final</quarkus.version>
+    <quarkus.version>2.15.3.Final</quarkus.version>
     <discord4j.version>3.2.3</discord4j.version>
   </properties>
 
