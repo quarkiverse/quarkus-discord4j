@@ -19,7 +19,7 @@
     <module>docs</module>
   </modules>
   <scm>
-    <connection>:git:git@github.com:quarkiverse/quarkus-discord4j.git</connection>
+    <connection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</connection>
     <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</developerConnection>
     <url>https://github.com/quarkiverse/quarkus-discord4j</url>
   </scm>
