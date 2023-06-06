@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.quarkiverse</groupId>
     <artifactId>quarkiverse-parent</artifactId>
     <version>10</version>
   </parent>
-
   <groupId>io.quarkiverse.discord4j</groupId>
   <artifactId>quarkus-discord4j-parent</artifactId>
   <version>999-SNAPSHOT</version>
-
   <packaging>pom</packaging>
   <name>Quarkus - Discord4J - Parent</name>
-
   <modules>
     <module>deployment</module>
     <module>runtime</module>
@@ -22,17 +18,19 @@
     <module>integration-tests</module>
     <module>docs</module>
   </modules>
-
+  <scm>
+    <connection>:git:git@github.com:quarkiverse/quarkus-discord4j.git</connection>
+    <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</developerConnection>
+    <url>https://github.com/quarkiverse/quarkus-discord4j</url>
+  </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.release>11</maven.compiler.release>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
-
     <quarkus.version>2.14.2.Final</quarkus.version>
     <discord4j.version>3.2.3</discord4j.version>
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -44,7 +42,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -65,7 +62,6 @@
       </plugins>
     </pluginManagement>
   </build>
-
   <profiles>
     <profile>
       <id>it</id>
@@ -80,5 +76,4 @@
       </modules>
     </profile>
   </profiles>
-
 </project>
