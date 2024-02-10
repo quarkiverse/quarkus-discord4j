@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.quarkiverse</groupId>
     <artifactId>quarkiverse-parent</artifactId>
-    <version>10</version>
+    <version>16</version>
   </parent>
   <groupId>io.quarkiverse.discord4j</groupId>
   <artifactId>quarkus-discord4j-parent</artifactId>
