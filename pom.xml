@@ -26,10 +26,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.release>17</maven.compiler.release>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <quarkus.version>2.14.2.Final</quarkus.version>
-    <discord4j.version>3.2.3</discord4j.version>
+    <quarkus.version>3.7.2</quarkus.version>
+    <discord4j.version>3.2.6</discord4j.version>
   </properties>
   <dependencyManagement>
     <dependencies>

@@ -2,7 +2,7 @@ package io.quarkiverse.discord4j.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.enterprise.inject.Any;
+import jakarta.enterprise.inject.Any;
 
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.junit.jupiter.api.Test;

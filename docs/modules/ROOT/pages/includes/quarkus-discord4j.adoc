@@ -10,7 +10,8 @@ h|[[quarkus-discord4j_configuration]]link:#quarkus-discord4j_configuration[Confi
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.health.enabled]]`link:#quarkus-discord4j_quarkus.discord4j.health.enabled[quarkus.discord4j.health.enabled]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-health-enabled]]`link:#quarkus-discord4j_quarkus-discord4j-health-enabled[quarkus.discord4j.health.enabled]`
+
 
 [.description]
 --
@@ -26,7 +27,8 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.metrics.enabled]]`link:#quarkus-discord4j_quarkus.discord4j.metrics.enabled[quarkus.discord4j.metrics.enabled]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-metrics-enabled]]`link:#quarkus-discord4j_quarkus-discord4j-metrics-enabled[quarkus.discord4j.metrics.enabled]`
+
 
 [.description]
 --
@@ -42,7 +44,8 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.global-commands.overwrite-on-start]]`link:#quarkus-discord4j_quarkus.discord4j.global-commands.overwrite-on-start[quarkus.discord4j.global-commands.overwrite-on-start]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-global-commands-overwrite-on-start]]`link:#quarkus-discord4j_quarkus-discord4j-global-commands-overwrite-on-start[quarkus.discord4j.global-commands.overwrite-on-start]`
+
 
 [.description]
 --
@@ -58,7 +61,8 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.global-commands.path]]`link:#quarkus-discord4j_quarkus.discord4j.global-commands.path[quarkus.discord4j.global-commands.path]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-global-commands-path]]`link:#quarkus-discord4j_quarkus-discord4j-global-commands-path[quarkus.discord4j.global-commands.path]`
+
 
 [.description]
 --
@@ -74,7 +78,8 @@ endif::add-copy-button-to-env-var[]
 |`META-INF/commands`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.global-commands.delete-missing]]`link:#quarkus-discord4j_quarkus.discord4j.global-commands.delete-missing[quarkus.discord4j.global-commands.delete-missing]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-global-commands-delete-missing]]`link:#quarkus-discord4j_quarkus-discord4j-global-commands-delete-missing[quarkus.discord4j.global-commands.delete-missing]`
+
 
 [.description]
 --
@@ -90,7 +95,8 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.token]]`link:#quarkus-discord4j_quarkus.discord4j.token[quarkus.discord4j.token]`
+a| [[quarkus-discord4j_quarkus-discord4j-token]]`link:#quarkus-discord4j_quarkus-discord4j-token[quarkus.discord4j.token]`
+
 
 [.description]
 --
@@ -106,7 +112,8 @@ endif::add-copy-button-to-env-var[]
 |required icon:exclamation-circle[title=Configuration property is required]
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.presence.status]]`link:#quarkus-discord4j_quarkus.discord4j.presence.status[quarkus.discord4j.presence.status]`
+a| [[quarkus-discord4j_quarkus-discord4j-presence-status]]`link:#quarkus-discord4j_quarkus-discord4j-presence-status[quarkus.discord4j.presence.status]`
+
 
 [.description]
 --
@@ -123,7 +130,8 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.enabled-intents]]`link:#quarkus-discord4j_quarkus.discord4j.enabled-intents[quarkus.discord4j.enabled-intents]`
+a| [[quarkus-discord4j_quarkus-discord4j-enabled-intents]]`link:#quarkus-discord4j_quarkus-discord4j-enabled-intents[quarkus.discord4j.enabled-intents]`
+
 
 [.description]
 --
@@ -139,7 +147,8 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.entity-retrieval-strategy]]`link:#quarkus-discord4j_quarkus.discord4j.entity-retrieval-strategy[quarkus.discord4j.entity-retrieval-strategy]`
+a| [[quarkus-discord4j_quarkus-discord4j-entity-retrieval-strategy]]`link:#quarkus-discord4j_quarkus-discord4j-entity-retrieval-strategy[quarkus.discord4j.entity-retrieval-strategy]`
+
 
 [.description]
 --
@@ -155,7 +164,8 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.sharding.count]]`link:#quarkus-discord4j_quarkus.discord4j.sharding.count[quarkus.discord4j.sharding.count]`
+a| [[quarkus-discord4j_quarkus-discord4j-sharding-count]]`link:#quarkus-discord4j_quarkus-discord4j-sharding-count[quarkus.discord4j.sharding.count]`
+
 
 [.description]
 --
@@ -171,7 +181,8 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.sharding.indices]]`link:#quarkus-discord4j_quarkus.discord4j.sharding.indices[quarkus.discord4j.sharding.indices]`
+a| [[quarkus-discord4j_quarkus-discord4j-sharding-indices]]`link:#quarkus-discord4j_quarkus-discord4j-sharding-indices[quarkus.discord4j.sharding.indices]`
+
 
 [.description]
 --
@@ -187,7 +198,8 @@ endif::add-copy-button-to-env-var[]
 |`0`
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.sharding.max-concurrency]]`link:#quarkus-discord4j_quarkus.discord4j.sharding.max-concurrency[quarkus.discord4j.sharding.max-concurrency]`
+a| [[quarkus-discord4j_quarkus-discord4j-sharding-max-concurrency]]`link:#quarkus-discord4j_quarkus-discord4j-sharding-max-concurrency[quarkus.discord4j.sharding.max-concurrency]`
+
 
 [.description]
 --
@@ -210,7 +222,8 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.overwrite-on-start]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.overwrite-on-start[quarkus.discord4j.guild-commands."guild-commands".overwrite-on-start]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-overwrite-on-start]]`link:#quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-overwrite-on-start[quarkus.discord4j.guild-commands."guild-commands".overwrite-on-start]`
+
 
 [.description]
 --
@@ -226,7 +239,8 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.path]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.path[quarkus.discord4j.guild-commands."guild-commands".path]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-path]]`link:#quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-path[quarkus.discord4j.guild-commands."guild-commands".path]`
+
 
 [.description]
 --
@@ -242,7 +256,8 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.delete-missing]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.delete-missing[quarkus.discord4j.guild-commands."guild-commands".delete-missing]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-delete-missing]]`link:#quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-delete-missing[quarkus.discord4j.guild-commands."guild-commands".delete-missing]`
+
 
 [.description]
 --
@@ -258,7 +273,8 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.guild-id]]`link:#quarkus-discord4j_quarkus.discord4j.guild-commands.-guild-commands-.guild-id[quarkus.discord4j.guild-commands."guild-commands".guild-id]`
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-guild-id]]`link:#quarkus-discord4j_quarkus-discord4j-guild-commands-guild-commands-guild-id[quarkus.discord4j.guild-commands."guild-commands".guild-id]`
+
 
 [.description]
 --
@@ -274,12 +290,13 @@ endif::add-copy-button-to-env-var[]
 |`0l`
 
 
-h|[[quarkus-discord4j_quarkus.discord4j.presence.activity-activity-configuration]]link:#quarkus-discord4j_quarkus.discord4j.presence.activity-activity-configuration[Activity configuration]
+h|[[quarkus-discord4j_quarkus-discord4j-presence-activity-activity-configuration]]link:#quarkus-discord4j_quarkus-discord4j-presence-activity-activity-configuration[Activity configuration]
 This configuration section is optional
 h|Type
 h|Default
 
-a| [[quarkus-discord4j_quarkus.discord4j.presence.activity.type]]`link:#quarkus-discord4j_quarkus.discord4j.presence.activity.type[quarkus.discord4j.presence.activity.type]`
+a| [[quarkus-discord4j_quarkus-discord4j-presence-activity-type]]`link:#quarkus-discord4j_quarkus-discord4j-presence-activity-type[quarkus.discord4j.presence.activity.type]`
+
 
 [.description]
 --
@@ -296,7 +313,8 @@ endif::add-copy-button-to-env-var[]
 |required icon:exclamation-circle[title=Configuration property is required]
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.presence.activity.name]]`link:#quarkus-discord4j_quarkus.discord4j.presence.activity.name[quarkus.discord4j.presence.activity.name]`
+a| [[quarkus-discord4j_quarkus-discord4j-presence-activity-name]]`link:#quarkus-discord4j_quarkus-discord4j-presence-activity-name[quarkus.discord4j.presence.activity.name]`
+
 
 [.description]
 --
@@ -312,7 +330,8 @@ endif::add-copy-button-to-env-var[]
 |required icon:exclamation-circle[title=Configuration property is required]
 
 
-a| [[quarkus-discord4j_quarkus.discord4j.presence.activity.url]]`link:#quarkus-discord4j_quarkus.discord4j.presence.activity.url[quarkus.discord4j.presence.activity.url]`
+a| [[quarkus-discord4j_quarkus-discord4j-presence-activity-url]]`link:#quarkus-discord4j_quarkus-discord4j-presence-activity-url[quarkus.discord4j.presence.activity.url]`
+
 
 [.description]
 --

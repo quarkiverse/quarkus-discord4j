@@ -1,6 +1,6 @@
 package io.quarkiverse.discord4j.runtime.converter;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import org.eclipse.microprofile.config.spi.Converter;
 
