@@ -2,7 +2,7 @@ package io.quarkiverse.discord4j.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.AfterEach;

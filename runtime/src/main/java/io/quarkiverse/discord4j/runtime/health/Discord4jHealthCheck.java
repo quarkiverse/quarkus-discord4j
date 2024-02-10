@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
@@ -15,6 +15,7 @@ import discord4j.gateway.GatewayClient;
 import discord4j.gateway.GatewayClientGroup;
 import io.smallrye.health.api.AsyncHealthCheck;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.converters.uni.UniReactorConverters;
 
 @Readiness
 public class Discord4jHealthCheck implements AsyncHealthCheck {
@@ -38,16 +39,15 @@ public class Discord4jHealthCheck implements AsyncHealthCheck {
             String responseTime = client.get().getResponseTime().toString().substring(2).toLowerCase();
             String shardName = "shard." + i;
 
-            unis.add(
-                    Uni.createFrom().publisher(client.get().isConnected().doOnNext(connected -> {
-                        if (connected) {
-                            builder.withData(shardName + ".response.time", responseTime);
-                        } else {
-                            builder.down().withData("reason", shardName + " is not connected");
-                        }
-                    })));
+            unis.add(UniReactorConverters.<Boolean> fromMono().from(client.get().isConnected().doOnNext(connected -> {
+                if (connected) {
+                    builder.withData(shardName + ".response.time", responseTime);
+                } else {
+                    builder.down().withData("reason", shardName + " is not connected");
+                }
+            })));
         }
 
-        return Uni.combine().all().unis(unis).combinedWith(ignored -> builder.build());
+        return Uni.combine().all().unis(unis).with(ignored -> builder.build());
     }
 }

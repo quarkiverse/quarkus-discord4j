@@ -3,6 +3,9 @@ package io.quarkiverse.discord4j.test;
 import static io.restassured.RestAssured.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.concurrent.TimeUnit;
+
+import org.awaitility.Awaitility;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -27,8 +30,9 @@ public class Discord4jDevModeTest {
         assertEquals(0, config.getLogRecords().size());
 
         config.addSourceFile(MyBean.class);
+
         get("/discord");
-        assertEquals(1, config.getLogRecords().size());
+        Awaitility.await().atMost(1, TimeUnit.SECONDS).until(() -> config.getLogRecords().size() == 1);
     }
 
     static class MyBean {
