@@ -58,6 +58,8 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          QUARKUS_DISCORD4J_TOKEN: ${{ secrets.QUARKUS_DISCORD4J_TOKEN }}
+          QUARKUS_DISCORD4J_GUILD_COMMANDS_TEST_GUILD_ID: ${{ secrets.QUARKUS_DISCORD4J_GUILD_COMMANDS_TEST_GUILD_ID }}
 
       - name: Adjust tag for documentation changes
         run: |
