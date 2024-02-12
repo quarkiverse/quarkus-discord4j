@@ -19,6 +19,9 @@ public class Discord4jUtils {
         if (typeName.equals(UNI.toString())) {
             resultHandle = bc.invokeVirtualMethod(TO_MONO_APPLY, bc.invokeStaticMethod(UNI_REACTOR_CONVERTERS_TO_MONO),
                     resultHandle);
+        } else if (typeName.equals(MULTI.toString())) {
+            resultHandle = bc.invokeVirtualMethod(TO_FLUX_APPLY, bc.invokeStaticMethod(MULTI_REACTOR_CONVERTERS_TO_FLUX),
+                    resultHandle);
         }
         return resultHandle;
     }

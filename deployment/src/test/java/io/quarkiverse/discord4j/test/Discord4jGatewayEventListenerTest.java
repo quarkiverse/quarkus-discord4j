@@ -1,8 +1,12 @@
 package io.quarkiverse.discord4j.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.inject.Inject;
 
@@ -42,6 +46,7 @@ public class Discord4jGatewayEventListenerTest {
     @AfterEach
     void cleanup() {
         if (gateway != null) {
+            counter.set(0);
             gateway.logout().block();
         }
     }
@@ -54,26 +59,40 @@ public class Discord4jGatewayEventListenerTest {
         gateway.getEventDispatcher()
                 .publish(new MessageCreateEvent(gateway, ShardInfo.create(0, 1), new Message(gateway, data), null, null));
 
-        config.assertLogRecords(lr -> assertEquals(4, lr.size()));
+        await().atMost(Duration.ofSeconds(5)).untilAtomic(counter, is(greaterThanOrEqualTo(4)));
     }
+
+    static AtomicInteger counter = new AtomicInteger();
 
     static class MyBean {
         private static final Logger LOGGER = Logger.getLogger(MyBean.class);
 
         Mono<Void> monoMessage(@GatewayEvent MessageCreateEvent messageCreate) {
-            return Mono.fromRunnable(() -> LOGGER.info("Received MessageCreateEvent"));
+            return Mono.fromRunnable(() -> {
+                LOGGER.info("Received MessageCreateEvent (Mono)");
+                counter.incrementAndGet();
+            });
         }
 
         Uni<Void> uniMessage(@GatewayEvent MessageCreateEvent messageCreate) {
-            return Uni.createFrom().voidItem().invoke(() -> LOGGER.info("Received MessageCreateEvent"));
+            return Uni.createFrom().voidItem().invoke(() -> {
+                LOGGER.info("Received MessageCreateEvent (Uni)");
+                counter.incrementAndGet();
+            });
         }
 
         Flux<Void> fluxMessage(@GatewayEvent MessageCreateEvent messageCreate) {
-            return Mono.fromRunnable(() -> LOGGER.info("Received MessageCreateEvent")).thenMany(Flux.empty());
+            return Mono.fromRunnable(() -> {
+                LOGGER.info("Received MessageCreateEvent (Flux)");
+                counter.incrementAndGet();
+            }).thenMany(Flux.empty());
         }
 
         Multi<Void> multiMessage(@GatewayEvent MessageCreateEvent messageCreate) {
-            return Uni.createFrom().voidItem().invoke(() -> LOGGER.info("Received MessageCreateEvent")).toMulti();
+            return Uni.createFrom().voidItem().invoke(() -> {
+                LOGGER.info("Received MessageCreateEvent (Multi)");
+                counter.incrementAndGet();
+            }).toMulti();
         }
     }
 }
