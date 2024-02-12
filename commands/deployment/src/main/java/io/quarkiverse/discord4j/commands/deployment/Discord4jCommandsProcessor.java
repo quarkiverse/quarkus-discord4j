@@ -215,7 +215,7 @@ public class Discord4jCommandsProcessor {
                     Discord4jUtils.getBeanInstance(mc, method.declaringClass().name().toString()),
                     mc.checkCast(mc.getMethodParam(0), method.parameterTypes().get(0).name().toString()));
 
-            mc.returnValue(Discord4jUtils.convertIfUni(method.returnType().name().toString(), mc, publisher));
+            mc.returnValue(Discord4jUtils.convertIfMutinyTypes(method.returnType().name().toString(), mc, publisher));
             cc.close();
         }
 

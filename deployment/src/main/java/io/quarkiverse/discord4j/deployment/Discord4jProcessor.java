@@ -345,7 +345,7 @@ public class Discord4jProcessor {
                     mc.readInstanceField(instance.getFieldDescriptor(), mc.getThis()),
                     resultHandles.toArray(new ResultHandle[0]));
 
-            mc.returnValue(Discord4jUtils.convertIfUni(observer.getReturnType(), mc, publisher));
+            mc.returnValue(Discord4jUtils.convertIfMutinyTypes(observer.getReturnType(), mc, publisher));
             cc.close();
         }
 
