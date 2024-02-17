@@ -15,9 +15,12 @@ import io.quarkus.gizmo.ResultHandle;
 public class Discord4jUtils {
     private static final List<DotName> RETURN_TYPES = List.of(FLUX, MONO, MULTI, UNI);
 
-    public static ResultHandle convertIfUni(String typeName, BytecodeCreator bc, ResultHandle resultHandle) {
+    public static ResultHandle convertIfMutinyTypes(String typeName, BytecodeCreator bc, ResultHandle resultHandle) {
         if (typeName.equals(UNI.toString())) {
             resultHandle = bc.invokeVirtualMethod(TO_MONO_APPLY, bc.invokeStaticMethod(UNI_REACTOR_CONVERTERS_TO_MONO),
+                    resultHandle);
+        } else if (typeName.equals(MULTI.toString())) {
+            resultHandle = bc.invokeVirtualMethod(TO_FLUX_APPLY, bc.invokeStaticMethod(MULTI_REACTOR_CONVERTERS_TO_FLUX),
                     resultHandle);
         }
         return resultHandle;

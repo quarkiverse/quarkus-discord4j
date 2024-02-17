@@ -9,7 +9,10 @@ import discord4j.core.GatewayDiscordClient;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
 import io.quarkus.gizmo.MethodDescriptor;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.converters.multi.MultiReactorConverters;
+import io.smallrye.mutiny.converters.multi.ToFlux;
 import io.smallrye.mutiny.converters.uni.ToMono;
 import io.smallrye.mutiny.converters.uni.UniReactorConverters;
 import reactor.core.Disposable;
@@ -33,8 +36,14 @@ public class Discord4jMethodDescriptors {
             Publisher[].class);
     public static final MethodDescriptor TO_MONO_APPLY = MethodDescriptor.ofMethod(ToMono.class, "apply", Mono.class,
             Uni.class);
+    public static final MethodDescriptor TO_FLUX_APPLY = MethodDescriptor.ofMethod(ToFlux.class, "apply", Flux.class,
+            Multi.class);
     public static final MethodDescriptor UNI_REACTOR_CONVERTERS_TO_MONO = MethodDescriptor.ofMethod(UniReactorConverters.class,
             "toMono", ToMono.class);
+
+    public static final MethodDescriptor MULTI_REACTOR_CONVERTERS_TO_FLUX = MethodDescriptor.ofMethod(
+            MultiReactorConverters.class,
+            "toFlux", ToFlux.class);
 
     private Discord4jMethodDescriptors() {
     }
