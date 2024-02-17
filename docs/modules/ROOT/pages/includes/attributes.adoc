@@ -1,5 +1,5 @@
-:quarkus-version: 3.7.2
-:quarkus-discord4j-version: 0
+:quarkus-version: 3.7.3
+:quarkus-discord4j-version: 0.0.1
 
 :quarkus-guides: https://quarkus.io/guides
 :discord4j-javadoc-url: https://javadoc.io/doc/com.discord4j/discord4j-core/latest/discord4j/core
