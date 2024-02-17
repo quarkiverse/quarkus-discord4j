@@ -8,7 +8,7 @@
   </parent>
   <groupId>io.quarkiverse.discord4j</groupId>
   <artifactId>quarkus-discord4j-parent</artifactId>
-  <version>999-SNAPSHOT</version>
+  <version>0.0.1</version>
   <packaging>pom</packaging>
   <name>Quarkus - Discord4J - Parent</name>
   <modules>
@@ -22,6 +22,7 @@
     <connection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</connection>
     <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</developerConnection>
     <url>https://github.com/quarkiverse/quarkus-discord4j</url>
+    <tag>0.0.1</tag>
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
