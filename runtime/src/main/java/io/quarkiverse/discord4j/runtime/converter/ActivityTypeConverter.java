@@ -20,18 +20,13 @@ public class ActivityTypeConverter implements Converter<Activity.Type> {
             return null;
         }
 
-        switch (value.toLowerCase()) {
-            case "playing":
-                return Activity.Type.PLAYING;
-            case "streaming":
-                return Activity.Type.STREAMING;
-            case "listening to":
-                return Activity.Type.LISTENING;
-            case "watching":
-                return Activity.Type.WATCHING;
-            case "competing in":
-                return Activity.Type.COMPETING;
-        }
-        throw new IllegalStateException(String.format("%s is not a supported activity type", value));
+        return switch (value.toLowerCase()) {
+            case "playing" -> Activity.Type.PLAYING;
+            case "streaming" -> Activity.Type.STREAMING;
+            case "listening to" -> Activity.Type.LISTENING;
+            case "watching" -> Activity.Type.WATCHING;
+            case "competing in" -> Activity.Type.COMPETING;
+            default -> throw new IllegalStateException(String.format("%s is not a supported activity type", value));
+        };
     }
 }

@@ -20,16 +20,12 @@ public class StatusConverter implements Converter<Status> {
             return null;
         }
 
-        switch (value.toLowerCase()) {
-            case "online":
-                return Status.ONLINE;
-            case "idle":
-                return Status.IDLE;
-            case "dnd":
-                return Status.DO_NOT_DISTURB;
-            case "invisible":
-                return Status.INVISIBLE;
-        }
-        throw new IllegalArgumentException(String.format("%s is not a supported status", value));
+        return switch (value.toLowerCase()) {
+            case "online" -> Status.ONLINE;
+            case "idle" -> Status.IDLE;
+            case "dnd" -> Status.DO_NOT_DISTURB;
+            case "invisible" -> Status.INVISIBLE;
+            default -> throw new IllegalArgumentException(String.format("%s is not a supported status", value));
+        };
     }
 }
