@@ -36,9 +36,15 @@ import org.jboss.jandex.MethodParameterInfo;
 import org.jboss.jandex.Type;
 import org.reactivestreams.Publisher;
 
+import com.fasterxml.jackson.databind.ser.std.ClassSerializer;
+
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
+import discord4j.discordjson.json.gateway.HeartbeatConverter;
+import discord4j.discordjson.json.gateway.OpcodeConverter;
+import discord4j.discordjson.possible.PossibleFilter;
 import discord4j.discordjson.possible.PossibleModule;
+import discord4j.rest.json.response.ErrorResponse;
 import io.netty.channel.EventLoopGroup;
 import io.quarkiverse.discord4j.deployment.spi.GatewayEventSubscriberFlatMapOperatorBuildItem;
 import io.quarkiverse.discord4j.runtime.Discord4jRecorder;
@@ -109,17 +115,15 @@ public class Discord4jProcessor {
     @BuildStep
     void reflection(BuildProducer<ReflectiveClassBuildItem> reflection) {
         // jackson classes that the extension doesn't discover
-        reflection.produce(new ReflectiveClassBuildItem(false, false,
-                "com.fasterxml.jackson.databind.ser.std.ClassSerializer",
-                "discord4j.discordjson.json.gateway.HeartbeatConverter",
-                "discord4j.discordjson.json.gateway.OpcodeConverter",
-                "discord4j.discordjson.possible.PossibleFilter",
-                "discord4j.rest.json.response.ErrorResponse"));
+        reflection.produce(ReflectiveClassBuildItem
+                .builder(ClassSerializer.class, HeartbeatConverter.class, OpcodeConverter.class, PossibleFilter.class,
+                        ErrorResponse.class)
+                .methods(false).fields(false).build());
 
         // caffeine deps not covered by the caffeine extension
-        reflection.produce(new ReflectiveClassBuildItem(true, true,
-                "com.github.benmanes.caffeine.cache.PW",
-                "com.github.benmanes.caffeine.cache.SI"));
+        reflection.produce(ReflectiveClassBuildItem
+                .builder("com.github.benmanes.caffeine.cache.PW", "com.github.benmanes.caffeine.cache.SI")
+                .methods(true).fields(true).build());
     }
 
     @BuildStep
@@ -138,7 +142,7 @@ public class Discord4jProcessor {
     @Record(ExecutionTime.STATIC_INIT)
     void metrics(Discord4jBuildTimeConfig config, Optional<MetricsCapabilityBuildItem> metrics,
             Discord4jRecorder recorder) {
-        if (config.metricsEnabled && metrics.isPresent()) {
+        if (config.metrics().enabled() && metrics.isPresent()) {
             recorder.setupMetrics(metrics.get().metricsSupported(MetricsFactory.MICROMETER)
                     ? MetricsFactory.MICROMETER
                     : MetricsFactory.MP_METRICS);
@@ -147,7 +151,7 @@ public class Discord4jProcessor {
 
     @BuildStep
     HealthBuildItem health(Discord4jBuildTimeConfig config) {
-        return new HealthBuildItem(PACKAGE + "health.Discord4jHealthCheck", config.healthEnabled);
+        return new HealthBuildItem(PACKAGE + "health.Discord4jHealthCheck", config.health().enabled());
     }
 
     @BuildStep
@@ -197,7 +201,7 @@ public class Discord4jProcessor {
             }
 
             List<Type> params = new ArrayList<>(method.parameterTypes());
-            params.remove(0);
+            params.removeFirst();
 
             observers.produce(new GatewayEventObserverBuildItem(
                     className, returnType.name().toString(), method.name(), paramName.toString(), params));
@@ -209,13 +213,10 @@ public class Discord4jProcessor {
     void syntheticBeans(Discord4jRecorder recorder, Discord4jConfig config, SslNativeConfigBuildItem nativeSslConfig,
             ExecutorBuildItem executor, Optional<EventLoopSupplierBuildItem> eventLoopSupplierBuildItem,
             BuildProducer<SyntheticBeanBuildItem> syntheticBeans) {
-        Supplier<EventLoopGroup> eventLoopGroupSupplier;
-        if (eventLoopSupplierBuildItem.isPresent()) {
-            eventLoopGroupSupplier = eventLoopSupplierBuildItem.get().getMainSupplier();
-        } else {
-            eventLoopGroupSupplier = recorder.getEventLoopGroupBean();
-        }
 
+        Supplier<EventLoopGroup> eventLoopGroupSupplier = eventLoopSupplierBuildItem
+                .map(EventLoopSupplierBuildItem::getMainSupplier)
+                .orElseGet(recorder::getEventLoopGroupBean);
         Supplier<DiscordClient> discordClient = recorder.createDiscordClient(config, nativeSslConfig.isEnabled(),
                 executor.getExecutorProxy(), eventLoopGroupSupplier);
         syntheticBeans.produce(SyntheticBeanBuildItem.configure(GatewayDiscordClient.class)
@@ -338,7 +339,7 @@ public class Discord4jProcessor {
                 resultHandles.add(mc.readInstanceField(field.getFieldDescriptor(), mc.getThis()));
             }
 
-            params.add(0, eventClass);
+            params.addFirst(eventClass);
             ResultHandle publisher = mc.invokeVirtualMethod(
                     MethodDescriptor.ofMethod(
                             observerClass, observer.getMethod(), observer.getReturnType(), params.toArray(new String[0])),

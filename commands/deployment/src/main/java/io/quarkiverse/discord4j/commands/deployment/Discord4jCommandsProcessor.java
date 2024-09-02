@@ -1,16 +1,32 @@
 package io.quarkiverse.discord4j.commands.deployment;
 
-import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.*;
-import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.*;
+import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.FLUX;
+import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.MONO;
+import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.MULTI;
+import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.UNI;
+import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.FUNCTION_APPLY;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
-import org.jboss.jandex.*;
+import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.AnnotationTarget;
+import org.jboss.jandex.ClassInfo;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.IndexView;
+import org.jboss.jandex.MethodInfo;
 
-import discord4j.core.event.domain.interaction.*;
+import discord4j.core.event.domain.interaction.ChatInputAutoCompleteEvent;
+import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
+import discord4j.core.event.domain.interaction.InteractionCreateEvent;
+import discord4j.core.event.domain.interaction.MessageInteractionEvent;
+import discord4j.core.event.domain.interaction.UserInteractionEvent;
 import io.quarkiverse.discord4j.commands.Command;
 import io.quarkiverse.discord4j.commands.SubCommand;
 import io.quarkiverse.discord4j.commands.SubCommandGroup;
@@ -32,7 +48,13 @@ import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.AdditionalIndexedClassesBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.GeneratedClassBuildItem;
-import io.quarkus.gizmo.*;
+import io.quarkus.gizmo.BranchResult;
+import io.quarkus.gizmo.BytecodeCreator;
+import io.quarkus.gizmo.ClassCreator;
+import io.quarkus.gizmo.ClassOutput;
+import io.quarkus.gizmo.MethodCreator;
+import io.quarkus.gizmo.MethodDescriptor;
+import io.quarkus.gizmo.ResultHandle;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.MultiCreate;
@@ -96,7 +118,7 @@ public class Discord4jCommandsProcessor {
 
         for (CommandDefinition command : commands) {
             subscriberOperators.produce(new GatewayEventSubscriberFlatMapOperatorBuildItem(
-                    command.method.parameterTypes().get(0).name().toString(),
+                    command.method.parameterTypes().getFirst().name().toString(),
                     mc -> mc.newInstance(MethodDescriptor.ofConstructor(commandProxies.get(command)))));
         }
     }
@@ -127,11 +149,11 @@ public class Discord4jCommandsProcessor {
             ClassInfo cl = method.declaringClass();
             AnnotationInstance command, subCommandGroup;
 
-            if ((command = cl.classAnnotation(COMMAND)) != null) {
+            if ((command = cl.declaredAnnotation(COMMAND)) != null) {
                 builder.name(command.value().asString()).guildName(command.valueWithDefault(indexView, "guild").asString());
-            } else if ((subCommandGroup = cl.classAnnotation(SUB_COMMAND_GROUP)) != null) {
+            } else if ((subCommandGroup = cl.declaredAnnotation(SUB_COMMAND_GROUP)) != null) {
                 cl = indexView.getClassByName(cl.enclosingClass());
-                if ((command = cl.classAnnotation(COMMAND)) == null) {
+                if ((command = cl.declaredAnnotation(COMMAND)) == null) {
                     throw new IllegalStateException(String.format(
                             "Class annotated with %s must be enclosed in a class annotated with %s",
                             SUB_COMMAND_GROUP, COMMAND));
@@ -165,7 +187,7 @@ public class Discord4jCommandsProcessor {
                     annotation, method.declaringClass().name(), method.name()));
         }
 
-        if (!COMMAND_EVENTS.contains(method.parameterTypes().get(0).name())) {
+        if (!COMMAND_EVENTS.contains(method.parameterTypes().getFirst().name())) {
             throw new IllegalStateException(String.format(
                     "The parameter of the method annotated with %s at %s:%s must be one of: %s",
                     annotation, method.declaringClass().name(), method.name(), COMMAND_EVENTS));
@@ -213,7 +235,7 @@ public class Discord4jCommandsProcessor {
 
             ResultHandle publisher = mc.invokeVirtualMethod(method,
                     Discord4jUtils.getBeanInstance(mc, method.declaringClass().name().toString()),
-                    mc.checkCast(mc.getMethodParam(0), method.parameterTypes().get(0).name().toString()));
+                    mc.checkCast(mc.getMethodParam(0), method.parameterTypes().getFirst().name().toString()));
 
             mc.returnValue(Discord4jUtils.convertIfMutinyTypes(method.returnType().name().toString(), mc, publisher));
             cc.close();

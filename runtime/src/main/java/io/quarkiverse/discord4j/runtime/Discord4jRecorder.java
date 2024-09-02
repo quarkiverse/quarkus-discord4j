@@ -68,8 +68,8 @@ public class Discord4jRecorder {
     }
 
     private static ClientPresence getPresence(PresenceConfig presenceConfig) {
-        return ClientPresence.of(presenceConfig.status.orElse(Status.ONLINE), presenceConfig.activity
-                .map(activity -> ClientActivity.of(activity.type, activity.name, activity.url.orElse(null)))
+        return ClientPresence.of(presenceConfig.status().orElse(Status.ONLINE), presenceConfig.activity()
+                .map(activity -> ClientActivity.of(activity.type(), activity.name(), activity.url().orElse(null)))
                 .orElse(null));
     }
 
@@ -82,12 +82,7 @@ public class Discord4jRecorder {
     }
 
     public Supplier<EventLoopGroup> getEventLoopGroupBean() {
-        return new Supplier<EventLoopGroup>() {
-            @Override
-            public EventLoopGroup get() {
-                return Arc.container().instance(EventLoopGroup.class, MainEventLoopGroup.Literal.INSTANCE).get();
-            }
-        };
+        return () -> Arc.container().instance(EventLoopGroup.class, MainEventLoopGroup.Literal.INSTANCE).get();
     }
 
     @SuppressWarnings("unchecked")
@@ -100,82 +95,76 @@ public class Discord4jRecorder {
     // TODO jackson object mapper?
     public Supplier<DiscordClient> createDiscordClient(Discord4jConfig config, boolean ssl, ExecutorService executorService,
             Supplier<EventLoopGroup> eventLoopGroup) {
-        return new Supplier<>() {
-            @Override
-            public DiscordClient get() {
-                HttpClient httpClient = HttpClient.create().runOn(eventLoopGroup.get()).compress(true).followRedirect(true);
-                return DiscordClient.builder(config.token)
-                        .setReactorResources(ReactorResources.builder()
-                                .httpClient(ssl ? httpClient.secure() : httpClient)
-                                .blockingTaskScheduler(Schedulers.fromExecutorService(executorService))
-                                .build())
-                        .build();
-            }
+        return () -> {
+            HttpClient httpClient = HttpClient.create().runOn(eventLoopGroup.get()).compress(true).followRedirect(true);
+            return DiscordClient.builder(config.token())
+                    .setReactorResources(ReactorResources.builder()
+                            .httpClient(ssl ? httpClient.secure() : httpClient)
+                            .blockingTaskScheduler(Schedulers.fromExecutorService(executorService))
+                            .build())
+                    .build();
         };
     }
 
     public Supplier<GatewayDiscordClient> createGatewayClient(Discord4jConfig config,
             Supplier<DiscordClient> discordClientSupplier) {
-        return new Supplier<>() {
-            @Override
-            public GatewayDiscordClient get() {
-                GatewayBootstrap<GatewayOptions> bootstrap = discordClientSupplier.get().gateway();
-                bootstrap.setGatewayReactorResources(GatewayReactorResources::new);
-                bootstrap.setVoiceReactorResources(reactorResources -> VoiceReactorResources.builder(reactorResources)
-                        .udpClient(UdpClient.create().runOn(reactorResources.getHttpClient().configuration().loopResources()))
-                        .build());
+        return () -> {
+            GatewayBootstrap<GatewayOptions> bootstrap = discordClientSupplier.get().gateway();
+            bootstrap.setGatewayReactorResources(GatewayReactorResources::new);
+            bootstrap.setVoiceReactorResources(reactorResources -> VoiceReactorResources.builder(reactorResources)
+                    .udpClient(UdpClient.create().runOn(reactorResources.getHttpClient().configuration().loopResources()))
+                    .build());
 
-                bootstrap.setInitialPresence(shard -> getPresence(config.presence));
-                config.enabledIntents.ifPresent(intents -> bootstrap.setEnabledIntents(IntentSet.of(intents)));
-                config.entityRetrievalStrategy.ifPresent(bootstrap::setEntityRetrievalStrategy);
+            bootstrap.setInitialPresence(shard -> getPresence(config.presence()));
+            config.enabledIntents().ifPresent(intents -> bootstrap.setEnabledIntents(IntentSet.of(intents)));
+            bootstrap.setEntityRetrievalStrategy(config.entityRetrievalStrategy().strategy());
 
-                DefaultShardingStrategy.Builder shardBuilder = ShardingStrategy.builder();
-                config.sharding.count.ifPresent(shardBuilder::count);
-                config.sharding.indices.ifPresent(shardBuilder::indices);
-                config.sharding.maxConcurrency.ifPresent(shardBuilder::maxConcurrency);
-                bootstrap.setSharding(shardBuilder.build());
+            DefaultShardingStrategy.Builder shardBuilder = ShardingStrategy.builder();
+            config.sharding().count().ifPresent(shardBuilder::count);
+            config.sharding().indices().ifPresent(shardBuilder::indices);
+            config.sharding().maxConcurrency().ifPresent(shardBuilder::maxConcurrency);
+            bootstrap.setSharding(shardBuilder.build());
 
-                if (hotReplacementHandler != null) {
-                    DispatchEventMapper emitter = DispatchEventMapper.emitEvents();
-                    bootstrap.setDispatchEventMapper(new DispatchEventMapper() {
-                        @Override
-                        @SuppressWarnings("unchecked")
-                        public <D, S, E extends Event> Mono<E> handle(DispatchContext<D, S> context) {
-                            Class<?> dispatch = context.getDispatch().getClass();
-                            if (Ready.class.isAssignableFrom(dispatch) || Resumed.class.isAssignableFrom(dispatch) ||
-                                    GatewayStateChange.class.isAssignableFrom(dispatch)) {
-                                return emitter.handle(context);
-                            }
-
-                            Mono<E> event = emitter.handle(context);
-                            lastEvent = (Mono<Event>) event;
-
-                            return Mono.fromFuture(hotReplacementHandler.get())
-                                    .flatMap(restarted -> restarted ? Mono.empty() : event);
+            if (hotReplacementHandler != null) {
+                DispatchEventMapper emitter = DispatchEventMapper.emitEvents();
+                bootstrap.setDispatchEventMapper(new DispatchEventMapper() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public <D, S, E extends Event> Mono<E> handle(DispatchContext<D, S> context) {
+                        Class<?> dispatch = context.getDispatch().getClass();
+                        if (Ready.class.isAssignableFrom(dispatch) || Resumed.class.isAssignableFrom(dispatch) ||
+                                GatewayStateChange.class.isAssignableFrom(dispatch)) {
+                            return emitter.handle(context);
                         }
-                    });
+
+                        Mono<E> event = emitter.handle(context);
+                        lastEvent = (Mono<Event>) event;
+
+                        return Mono.fromFuture(hotReplacementHandler.get())
+                                .flatMap(restarted -> restarted ? Mono.empty() : event);
+                    }
+                });
+            }
+
+            bootstrap.withEventDispatcher(dispatcher -> {
+                List<Publisher<?>> sources = new ArrayList<>();
+                if (lastEvent != null) {
+                    sources.add(
+                            dispatcher.on(ReadyEvent.class).flatMap(ignored -> lastEvent).doOnNext(dispatcher::publish));
                 }
 
-                bootstrap.withEventDispatcher(dispatcher -> {
-                    List<Publisher<?>> sources = new ArrayList<>();
-                    if (lastEvent != null) {
-                        sources.add(
-                                dispatcher.on(ReadyEvent.class).flatMap(ignored -> lastEvent).doOnNext(dispatcher::publish));
-                    }
+                if (metricsHandler != null) {
+                    sources.add(metricsHandler.apply(dispatcher));
+                }
 
-                    if (metricsHandler != null) {
-                        sources.add(metricsHandler.apply(dispatcher));
-                    }
+                for (Function<ReadyEvent, Publisher<?>> readyEventFunction : readyEventFunctions) {
+                    sources.add(dispatcher.on(ReadyEvent.class).flatMap(readyEventFunction));
+                }
 
-                    for (Function<ReadyEvent, Publisher<?>> readyEventFunction : readyEventFunctions) {
-                        sources.add(dispatcher.on(ReadyEvent.class).flatMap(readyEventFunction));
-                    }
+                return Flux.concat(sources);
+            });
 
-                    return Flux.concat(sources);
-                });
-
-                return bootstrap.login().block();
-            }
+            return bootstrap.login().block();
         };
     }
 
