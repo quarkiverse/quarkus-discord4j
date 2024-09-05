@@ -138,7 +138,7 @@ public class Discord4jProcessor {
     @Record(ExecutionTime.STATIC_INIT)
     void metrics(Discord4jBuildTimeConfig config, Optional<MetricsCapabilityBuildItem> metrics,
             Discord4jRecorder recorder) {
-        if (config.metricsEnabled && metrics.isPresent()) {
+        if (config.metricsEnabled() && metrics.isPresent()) {
             recorder.setupMetrics(metrics.get().metricsSupported(MetricsFactory.MICROMETER)
                     ? MetricsFactory.MICROMETER
                     : MetricsFactory.MP_METRICS);
@@ -147,7 +147,7 @@ public class Discord4jProcessor {
 
     @BuildStep
     HealthBuildItem health(Discord4jBuildTimeConfig config) {
-        return new HealthBuildItem(PACKAGE + "health.Discord4jHealthCheck", config.healthEnabled);
+        return new HealthBuildItem(PACKAGE + "health.Discord4jHealthCheck", config.healthEnabled());
     }
 
     @BuildStep

@@ -36,6 +36,7 @@ import discord4j.gateway.retry.GatewayStateChange;
 import discord4j.voice.VoiceReactorResources;
 import io.netty.channel.EventLoopGroup;
 import io.quarkiverse.discord4j.runtime.config.Discord4jConfig;
+import io.quarkiverse.discord4j.runtime.config.EntityRetrievalStrategyConfig;
 import io.quarkiverse.discord4j.runtime.config.PresenceConfig;
 import io.quarkiverse.discord4j.runtime.metrics.MicroProfileGatewayClientMetricsHandler;
 import io.quarkiverse.discord4j.runtime.metrics.MicrometerGatewayClientMetricsHandler;
@@ -68,8 +69,8 @@ public class Discord4jRecorder {
     }
 
     private static ClientPresence getPresence(PresenceConfig presenceConfig) {
-        return ClientPresence.of(presenceConfig.status.orElse(Status.ONLINE), presenceConfig.activity
-                .map(activity -> ClientActivity.of(activity.type, activity.name, activity.url.orElse(null)))
+        return ClientPresence.of(presenceConfig.status().orElse(Status.ONLINE), presenceConfig.activity()
+                .map(activity -> ClientActivity.of(activity.type(), activity.name(), activity.url().orElse(null)))
                 .orElse(null));
     }
 
@@ -104,7 +105,7 @@ public class Discord4jRecorder {
             @Override
             public DiscordClient get() {
                 HttpClient httpClient = HttpClient.create().runOn(eventLoopGroup.get()).compress(true).followRedirect(true);
-                return DiscordClient.builder(config.token)
+                return DiscordClient.builder(config.token())
                         .setReactorResources(ReactorResources.builder()
                                 .httpClient(ssl ? httpClient.secure() : httpClient)
                                 .blockingTaskScheduler(Schedulers.fromExecutorService(executorService))
@@ -125,14 +126,15 @@ public class Discord4jRecorder {
                         .udpClient(UdpClient.create().runOn(reactorResources.getHttpClient().configuration().loopResources()))
                         .build());
 
-                bootstrap.setInitialPresence(shard -> getPresence(config.presence));
-                config.enabledIntents.ifPresent(intents -> bootstrap.setEnabledIntents(IntentSet.of(intents)));
-                config.entityRetrievalStrategy.ifPresent(bootstrap::setEntityRetrievalStrategy);
+                bootstrap.setInitialPresence(shard -> getPresence(config.presence()));
+                config.enabledIntents().ifPresent(intents -> bootstrap.setEnabledIntents(IntentSet.of(intents)));
+                config.entityRetrievalStrategy().map(EntityRetrievalStrategyConfig::strategy)
+                        .ifPresent(bootstrap::setEntityRetrievalStrategy);
 
                 DefaultShardingStrategy.Builder shardBuilder = ShardingStrategy.builder();
-                config.sharding.count.ifPresent(shardBuilder::count);
-                config.sharding.indices.ifPresent(shardBuilder::indices);
-                config.sharding.maxConcurrency.ifPresent(shardBuilder::maxConcurrency);
+                config.sharding().count().ifPresent(shardBuilder::count);
+                config.sharding().indices().ifPresent(shardBuilder::indices);
+                config.sharding().maxConcurrency().ifPresent(shardBuilder::maxConcurrency);
                 bootstrap.setSharding(shardBuilder.build());
 
                 if (hotReplacementHandler != null) {
