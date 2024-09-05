@@ -1,4 +1,4 @@
-:quarkus-version: 3.7.3
+:quarkus-version: 3.14.1
 :quarkus-discord4j-version: 0.0.1
 
 :quarkus-guides: https://quarkus.io/guides

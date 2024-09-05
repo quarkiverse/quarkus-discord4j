@@ -21,18 +21,18 @@ import io.quarkus.runtime.util.ClassPathUtils;
 public class Discord4jCommandsRecorder {
 
     public void registerCommands(Discord4jCommandsConfig config) throws IOException {
-        String globalCommandsPath = config.globalCommands.path;
-        if (config.globalCommands.overwriteOnStart) {
+        String globalCommandsPath = config.globalCommands().path();
+        if (config.globalCommands().overwriteOnStart()) {
             Discord4jCommandsRegistrar.globalCommands = readCommands(globalCommandsPath);
         }
 
-        for (Map.Entry<String, GuildCommandsConfig> entry : config.guildCommands.entrySet()) {
+        for (Map.Entry<String, GuildCommandsConfig> entry : config.guildCommands().entrySet()) {
             String name = entry.getKey();
             GuildCommandsConfig commandsConfig = entry.getValue();
 
-            if (commandsConfig.overwriteOnStart) {
+            if (commandsConfig.overwriteOnStart()) {
                 Discord4jCommandsRegistrar.guildCommands.put(name,
-                        readCommands(commandsConfig.path.orElse(globalCommandsPath + '/' + name)));
+                        readCommands(commandsConfig.path().orElse(globalCommandsPath + '/' + name)));
             }
         }
     }
