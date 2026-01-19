@@ -109,17 +109,17 @@ public class Discord4jProcessor {
     @BuildStep
     void reflection(BuildProducer<ReflectiveClassBuildItem> reflection) {
         // jackson classes that the extension doesn't discover
-        reflection.produce(new ReflectiveClassBuildItem(false, false,
+        reflection.produce(ReflectiveClassBuildItem.builder(
                 "com.fasterxml.jackson.databind.ser.std.ClassSerializer",
                 "discord4j.discordjson.json.gateway.HeartbeatConverter",
                 "discord4j.discordjson.json.gateway.OpcodeConverter",
                 "discord4j.discordjson.possible.PossibleFilter",
-                "discord4j.rest.json.response.ErrorResponse"));
+                "discord4j.rest.json.response.ErrorResponse").constructors().build());
 
         // caffeine deps not covered by the caffeine extension
-        reflection.produce(new ReflectiveClassBuildItem(true, true,
+        reflection.produce(ReflectiveClassBuildItem.builder(
                 "com.github.benmanes.caffeine.cache.PW",
-                "com.github.benmanes.caffeine.cache.SI"));
+                "com.github.benmanes.caffeine.cache.SI").constructors().methods().fields().build());
     }
 
     @BuildStep
