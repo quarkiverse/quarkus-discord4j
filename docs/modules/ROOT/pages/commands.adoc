@@ -63,7 +63,7 @@ To listen for the command you just defined, create the following class:
 class FooCommand {
 
     @Command(value="foo", guild="test") // <1>
-    Mono<Void> onFoo(ChatInputInteractionEvent event) { // <2>
+    Mono<Void> onFoo(@GatewayEvent ChatInputInteractionEvent event) { // <2>
         String name = event.getOption("name")
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(ApplicationCommandInteractionOptionValue::asString)
