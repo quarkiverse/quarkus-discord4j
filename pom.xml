@@ -27,7 +27,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.release>17</maven.compiler.release>
     <quarkus.version>3.35.2</quarkus.version>
-    <discord4j.version>3.2.6</discord4j.version>
+    <discord4j.version>3.2.10</discord4j.version>
   </properties>
   <dependencyManagement>
     <dependencies>
