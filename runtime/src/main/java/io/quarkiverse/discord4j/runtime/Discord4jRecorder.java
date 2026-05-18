@@ -23,7 +23,6 @@ import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.object.presence.ClientActivity;
 import discord4j.core.object.presence.ClientPresence;
-import discord4j.core.object.presence.Status;
 import discord4j.core.shard.DefaultShardingStrategy;
 import discord4j.core.shard.GatewayBootstrap;
 import discord4j.core.shard.ShardingStrategy;
@@ -31,19 +30,20 @@ import discord4j.discordjson.json.gateway.Ready;
 import discord4j.discordjson.json.gateway.Resumed;
 import discord4j.gateway.GatewayOptions;
 import discord4j.gateway.GatewayReactorResources;
+import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
 import discord4j.gateway.retry.GatewayStateChange;
 import discord4j.voice.VoiceReactorResources;
 import io.netty.channel.EventLoopGroup;
 import io.quarkiverse.discord4j.runtime.config.Discord4jConfig;
 import io.quarkiverse.discord4j.runtime.config.PresenceConfig;
-import io.quarkiverse.discord4j.runtime.metrics.MicroProfileGatewayClientMetricsHandler;
+import io.quarkiverse.discord4j.runtime.converter.EntityRetrievalStrategyConverter;
 import io.quarkiverse.discord4j.runtime.metrics.MicrometerGatewayClientMetricsHandler;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.BeanDestroyer;
 import io.quarkus.netty.MainEventLoopGroup;
+import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
-import io.quarkus.runtime.metrics.MetricsFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -52,11 +52,17 @@ import reactor.netty.udp.UdpClient;
 
 @Recorder
 public class Discord4jRecorder {
+    private final RuntimeValue<Discord4jConfig> config;
+
     private static volatile Mono<Event> lastEvent;
     public static volatile Supplier<CompletableFuture<Boolean>> hotReplacementHandler;
 
     private static Function<EventDispatcher, Publisher<?>> metricsHandler;
     private static List<Function<ReadyEvent, Publisher<?>>> readyEventFunctions = new ArrayList<>();
+
+    public Discord4jRecorder(RuntimeValue<Discord4jConfig> config) {
+        this.config = config;
+    }
 
     private static Object getBeanInstance(String className) {
         try {
@@ -68,17 +74,13 @@ public class Discord4jRecorder {
     }
 
     private static ClientPresence getPresence(PresenceConfig presenceConfig) {
-        return ClientPresence.of(presenceConfig.status.orElse(Status.ONLINE), presenceConfig.activity
-                .map(activity -> ClientActivity.of(activity.type, activity.name, activity.url.orElse(null)))
+        return ClientPresence.of(presenceConfig.status(), presenceConfig.activity()
+                .map(activity -> ClientActivity.of(activity.type(), activity.name(), activity.url().orElse(null)))
                 .orElse(null));
     }
 
-    public void setupMetrics(String type) {
-        if (type.equals(MetricsFactory.MICROMETER)) {
-            metricsHandler = new MicrometerGatewayClientMetricsHandler();
-        } else {
-            metricsHandler = new MicroProfileGatewayClientMetricsHandler();
-        }
+    public void setupMetrics() {
+        metricsHandler = new MicrometerGatewayClientMetricsHandler();
     }
 
     public Supplier<EventLoopGroup> getEventLoopGroupBean() {
@@ -97,14 +99,17 @@ public class Discord4jRecorder {
                 .collect(Collectors.toList());
     }
 
-    // TODO jackson object mapper?
-    public Supplier<DiscordClient> createDiscordClient(Discord4jConfig config, boolean ssl, ExecutorService executorService,
+    public Supplier<DiscordClient> createDiscordClient(boolean ssl, ExecutorService executorService,
             Supplier<EventLoopGroup> eventLoopGroup) {
+        Discord4jConfig c = config.getValue();
         return new Supplier<>() {
             @Override
             public DiscordClient get() {
+                String token = c.token()
+                        .orElseThrow(() -> new IllegalStateException(
+                                "quarkus.discord4j.token is required to create the Discord client"));
                 HttpClient httpClient = HttpClient.create().runOn(eventLoopGroup.get()).compress(true).followRedirect(true);
-                return DiscordClient.builder(config.token)
+                return DiscordClient.builder(token)
                         .setReactorResources(ReactorResources.builder()
                                 .httpClient(ssl ? httpClient.secure() : httpClient)
                                 .blockingTaskScheduler(Schedulers.fromExecutorService(executorService))
@@ -114,8 +119,9 @@ public class Discord4jRecorder {
         };
     }
 
-    public Supplier<GatewayDiscordClient> createGatewayClient(Discord4jConfig config,
+    public Supplier<GatewayDiscordClient> createGatewayClient(
             Supplier<DiscordClient> discordClientSupplier) {
+        Discord4jConfig c = config.getValue();
         return new Supplier<>() {
             @Override
             public GatewayDiscordClient get() {
@@ -125,14 +131,18 @@ public class Discord4jRecorder {
                         .udpClient(UdpClient.create().runOn(reactorResources.getHttpClient().configuration().loopResources()))
                         .build());
 
-                bootstrap.setInitialPresence(shard -> getPresence(config.presence));
-                config.enabledIntents.ifPresent(intents -> bootstrap.setEnabledIntents(IntentSet.of(intents)));
-                config.entityRetrievalStrategy.ifPresent(bootstrap::setEntityRetrievalStrategy);
+                bootstrap.setInitialPresence(shard -> getPresence(c.presence()));
+                c.enabledIntents()
+                        .ifPresent(intents -> bootstrap.setEnabledIntents(IntentSet.of(intents.toArray(new Intent[0]))));
+                c.entityRetrievalStrategy()
+                        .ifPresent(strategy -> bootstrap
+                                .setEntityRetrievalStrategy(new EntityRetrievalStrategyConverter().convert(strategy)));
 
                 DefaultShardingStrategy.Builder shardBuilder = ShardingStrategy.builder();
-                config.sharding.count.ifPresent(shardBuilder::count);
-                config.sharding.indices.ifPresent(shardBuilder::indices);
-                config.sharding.maxConcurrency.ifPresent(shardBuilder::maxConcurrency);
+                c.sharding().count().ifPresent(shardBuilder::count);
+                c.sharding().indices()
+                        .ifPresent(indices -> shardBuilder.indices(indices.stream().mapToInt(Integer::intValue).toArray()));
+                c.sharding().maxConcurrency().ifPresent(shardBuilder::maxConcurrency);
                 bootstrap.setSharding(shardBuilder.build());
 
                 if (hotReplacementHandler != null) {

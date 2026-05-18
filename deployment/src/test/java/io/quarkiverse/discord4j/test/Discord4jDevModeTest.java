@@ -1,6 +1,6 @@
 package io.quarkiverse.discord4j.test;
 
-import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
@@ -26,12 +26,12 @@ public class Discord4jDevModeTest {
 
     @Test
     public void testLiveReload() {
-        get("/discord");
+        when().get("/discord").then().statusCode(204);
         assertEquals(0, config.getLogRecords().size());
 
         config.addSourceFile(MyBean.class);
 
-        get("/discord");
+        when().get("/discord").then().statusCode(204);
         Awaitility.await().atMost(1, TimeUnit.SECONDS).until(() -> config.getLogRecords().size() == 1);
     }
 

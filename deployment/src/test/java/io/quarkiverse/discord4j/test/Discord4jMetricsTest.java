@@ -7,11 +7,6 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 
-import org.eclipse.microprofile.metrics.Gauge;
-import org.eclipse.microprofile.metrics.MetricID;
-import org.eclipse.microprofile.metrics.MetricRegistry;
-import org.eclipse.microprofile.metrics.MetricRegistry.Type;
-import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -19,6 +14,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.object.entity.Guild;
 import discord4j.voice.VoiceConnection;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.quarkiverse.discord4j.runtime.metrics.Metrics;
 import io.quarkus.test.QuarkusUnitTest;
 
@@ -31,8 +27,8 @@ public class Discord4jMetricsTest {
     @Inject
     GatewayDiscordClient gateway;
 
-    @RegistryType(type = Type.VENDOR)
-    MetricRegistry registry;
+    @Inject
+    MeterRegistry registry;
 
     @AfterEach
     void cleanup() {
@@ -47,16 +43,13 @@ public class Discord4jMetricsTest {
         assertNotNull(guilds);
         assertEquals(guilds.size(), gauge(Metrics.GUILDS_METRIC_NAME).intValue());
 
-        List<VoiceConnection> voiceConnections = gateway.getGuilds().flatMap(Guild::getVoiceConnection).collectList().block();
+        List<VoiceConnection> voiceConnections = gateway.getGuilds().flatMap(Guild::getVoiceConnection).collectList()
+                .block();
         assertNotNull(voiceConnections);
         assertEquals(voiceConnections.size(), gauge(Metrics.VOICE_CONNECTIONS_METRIC_NAME).intValue());
     }
 
-    private Long gauge(String name) {
-        Gauge<?> gauge = registry.getGauge(new MetricID(name));
-        if (gauge == null) {
-            throw new NullPointerException();
-        }
-        return (Long) gauge.getValue();
+    private Double gauge(String name) {
+        return registry.find(name).gauge().value();
     }
 }

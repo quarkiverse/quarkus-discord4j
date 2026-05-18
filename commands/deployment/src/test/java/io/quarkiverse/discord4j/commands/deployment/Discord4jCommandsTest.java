@@ -1,6 +1,7 @@
 package io.quarkiverse.discord4j.commands.deployment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 
@@ -47,6 +48,9 @@ public class Discord4jCommandsTest {
 
     @AfterEach
     void cleanup() {
+        if (guildId == 0) {
+            return;
+        }
         DiscordClient rest = gateway.rest();
         rest.getApplicationId().flatMap(id -> rest.getApplicationService()
                 .getGuildApplicationCommands(id, guildId)
@@ -63,6 +67,7 @@ public class Discord4jCommandsTest {
 
     @Test
     public void commandTest() throws IOException {
+        assumeTrue(guildId != 0, "Skipping command test: no real guild ID configured");
         InteractionData data = objectMapper.readValue(
                 Thread.currentThread().getContextClassLoader().getResource("interaction-create.json"),
                 InteractionData.class);

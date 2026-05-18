@@ -76,7 +76,7 @@ class DeletePersistentMessage {
 
 == Metrics
 
-If your Quarkus app uses a metrics extension like link:{quarkus-guides}/micrometer[Micrometer] or link:{quarkus-guides}/smallrye-metrics[SmallRye Metrics], you can enable metrics collection for your bot exposed at the `/q/metrics` endpoint by setting the configuration property `quarkus.discord4j.metrics.enabled` to true.
+If your Quarkus app uses the link:{quarkus-guides}/micrometer[Micrometer] extension, you can enable metrics collection for your bot exposed at the `/q/metrics` endpoint by setting the configuration property `quarkus.discord4j.metrics-enabled` to true.
 
 Currently, metrics are collected for the number of servers your bot is in and the number of voice channels your bot is in.
 
@@ -84,7 +84,7 @@ Currently, metrics are collected for the number of servers your bot is in and th
 
 A readiness health check for your bot is automatically exposed at the `/q/health/ready` endpoint if your Quarkus app depends on link:{quarkus-guides}/smallrye-health[SmallRye Health]. All of your bot's shards will be checked and the health status will be `DOWN` if any shard isn't connected.
 
-You can disable the health check by setting `quarkus.discord4j.health.enabled` to false.
+You can disable the health check by setting `quarkus.discord4j.health-enabled` to false.
 
 == Native executable
 

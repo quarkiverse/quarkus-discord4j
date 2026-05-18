@@ -5,40 +5,36 @@ import java.util.Optional;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Status;
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
 
 @ConfigGroup
-public class PresenceConfig {
+public interface PresenceConfig {
     /**
      * The status of the bot.
      */
-    @ConfigItem
-    public Optional<Status> status;
+    @WithDefault("online")
+    Status status();
 
     /**
-     * Activity configuration
+     * Activity configuration.
      */
-    @ConfigItem
-    public Optional<ActivityConfig> activity;
+    Optional<ActivityConfig> activity();
 
     @ConfigGroup
-    public static class ActivityConfig {
+    interface ActivityConfig {
         /**
          * The type of activity.
          */
-        @ConfigItem
-        public Activity.Type type;
+        Activity.Type type();
 
         /**
          * The name of the activity.
          */
-        @ConfigItem
-        public String name;
+        String name();
 
         /**
          * The YouTube or Twitch URL of the stream, if the activity type is {@code streaming}.
          */
-        @ConfigItem
-        public Optional<String> url;
+        Optional<String> url();
     }
 }

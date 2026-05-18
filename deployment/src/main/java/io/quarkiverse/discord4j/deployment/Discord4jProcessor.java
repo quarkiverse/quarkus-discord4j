@@ -42,7 +42,6 @@ import discord4j.discordjson.possible.PossibleModule;
 import io.netty.channel.EventLoopGroup;
 import io.quarkiverse.discord4j.deployment.spi.GatewayEventSubscriberFlatMapOperatorBuildItem;
 import io.quarkiverse.discord4j.runtime.Discord4jRecorder;
-import io.quarkiverse.discord4j.runtime.config.Discord4jConfig;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.deployment.AutoAddScopeBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
@@ -74,7 +73,6 @@ import io.quarkus.gizmo.ResultHandle;
 import io.quarkus.jackson.spi.ClassPathJacksonModuleBuildItem;
 import io.quarkus.netty.deployment.EventLoopSupplierBuildItem;
 import io.quarkus.runtime.StartupEvent;
-import io.quarkus.runtime.metrics.MetricsFactory;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 
 public class Discord4jProcessor {
@@ -138,16 +136,14 @@ public class Discord4jProcessor {
     @Record(ExecutionTime.STATIC_INIT)
     void metrics(Discord4jBuildTimeConfig config, Optional<MetricsCapabilityBuildItem> metrics,
             Discord4jRecorder recorder) {
-        if (config.metricsEnabled && metrics.isPresent()) {
-            recorder.setupMetrics(metrics.get().metricsSupported(MetricsFactory.MICROMETER)
-                    ? MetricsFactory.MICROMETER
-                    : MetricsFactory.MP_METRICS);
+        if (config.metricsEnabled() && metrics.isPresent()) {
+            recorder.setupMetrics();
         }
     }
 
     @BuildStep
     HealthBuildItem health(Discord4jBuildTimeConfig config) {
-        return new HealthBuildItem(PACKAGE + "health.Discord4jHealthCheck", config.healthEnabled);
+        return new HealthBuildItem(PACKAGE + "health.Discord4jHealthCheck", config.healthEnabled());
     }
 
     @BuildStep
@@ -206,7 +202,7 @@ public class Discord4jProcessor {
 
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
-    void syntheticBeans(Discord4jRecorder recorder, Discord4jConfig config, SslNativeConfigBuildItem nativeSslConfig,
+    void syntheticBeans(Discord4jRecorder recorder, SslNativeConfigBuildItem nativeSslConfig,
             ExecutorBuildItem executor, Optional<EventLoopSupplierBuildItem> eventLoopSupplierBuildItem,
             BuildProducer<SyntheticBeanBuildItem> syntheticBeans) {
         Supplier<EventLoopGroup> eventLoopGroupSupplier;
@@ -216,12 +212,12 @@ public class Discord4jProcessor {
             eventLoopGroupSupplier = recorder.getEventLoopGroupBean();
         }
 
-        Supplier<DiscordClient> discordClient = recorder.createDiscordClient(config, nativeSslConfig.isEnabled(),
+        Supplier<DiscordClient> discordClient = recorder.createDiscordClient(nativeSslConfig.isEnabled(),
                 executor.getExecutorProxy(), eventLoopGroupSupplier);
         syntheticBeans.produce(SyntheticBeanBuildItem.configure(GatewayDiscordClient.class)
                 .scope(ApplicationScoped.class)
                 .addQualifier(Default.class)
-                .supplier(recorder.createGatewayClient(config, discordClient))
+                .supplier(recorder.createGatewayClient(discordClient))
                 .destroyer(Discord4jRecorder.GatewayDiscordClientDestroyer.class)
                 .setRuntimeInit()
                 .unremovable()
@@ -236,14 +232,16 @@ public class Discord4jProcessor {
         ClassOutput output = new GeneratedBeanGizmoAdaptor(generatedBeans);
         Map<GatewayEventObserverBuildItem, String> proxyClasses = observerProxies(observers, output);
 
-        observers.removeIf(observer -> {
+        List<GatewayEventObserverBuildItem> remaining = new ArrayList<>();
+        for (GatewayEventObserverBuildItem observer : observers) {
             if (observer.observesReadyEvent()) {
                 readyEvents.produce(new ReadyEventObserverBuildItem(proxyClasses.get(observer)));
+            } else {
+                remaining.add(observer);
             }
-            return observer.observesReadyEvent();
-        });
+        }
 
-        for (GatewayEventObserverBuildItem observer : observers) {
+        for (GatewayEventObserverBuildItem observer : remaining) {
             subscriberOperators.produce(new GatewayEventSubscriberFlatMapOperatorBuildItem(
                     observer.getEventClassName(),
                     mc -> Discord4jUtils.getBeanInstance(mc, proxyClasses.get(observer))));
