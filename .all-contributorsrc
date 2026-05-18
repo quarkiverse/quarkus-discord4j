@@ -42,6 +42,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "artkonr",
+      "name": "Artem Kononov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40516045?v=4",
+      "profile": "https://github.com/artkonr",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
