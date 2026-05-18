@@ -14,17 +14,18 @@ import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.quarkus.arc.Arc;
 import reactor.core.publisher.Flux;
 
 public class MicrometerGatewayClientMetricsHandler implements Function<EventDispatcher, Publisher<?>> {
-    private static final MeterRegistry METER_REGISTRY = io.micrometer.core.instrument.Metrics.globalRegistry;
     private final AtomicInteger guilds = new AtomicInteger();
     private final AtomicInteger voiceConnections = new AtomicInteger();
 
     private void registerGauge(String name, String description, AtomicInteger value) {
+        MeterRegistry meterRegistry = Arc.container().instance(MeterRegistry.class).get();
         Gauge.builder(name, value, AtomicInteger::doubleValue)
                 .description(description)
-                .register(METER_REGISTRY);
+                .register(meterRegistry);
     }
 
     @Override
