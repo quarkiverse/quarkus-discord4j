@@ -4,16 +4,6 @@ on:
   watch:
     types: [started]
 
-permissions:
-  contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,6 +14,7 @@ defaults:
 
 jobs:
   build:
+    if: github.event_name == 'workflow_dispatch' || github.actor == 'quarkusbot'
     uses: quarkiverse/.github/.github/workflows/quarkus-ecosystem-ci.yml@main
     secrets: inherit
     with:
