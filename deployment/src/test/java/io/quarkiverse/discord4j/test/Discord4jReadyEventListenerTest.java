@@ -12,9 +12,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import io.quarkiverse.discord4j.GatewayEvent;
+import io.quarkiverse.discord4j.testing.EnabledWithDiscordToken;
 import io.quarkus.test.QuarkusUnitTest;
 import reactor.core.publisher.Mono;
 
+@EnabledWithDiscordToken
 public class Discord4jReadyEventListenerTest {
 
     @RegisterExtension

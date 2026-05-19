@@ -33,6 +33,11 @@ public interface Discord4jConfig {
     Optional<String> entityRetrievalStrategy();
 
     /**
+     * Mock mode configuration.
+     */
+    MockConfig mock();
+
+    /**
      * Sharding configuration.
      */
     ShardingConfig sharding();

@@ -16,8 +16,10 @@ import discord4j.core.object.entity.Guild;
 import discord4j.voice.VoiceConnection;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.quarkiverse.discord4j.runtime.metrics.Metrics;
+import io.quarkiverse.discord4j.testing.EnabledWithDiscordToken;
 import io.quarkus.test.QuarkusUnitTest;
 
+@EnabledWithDiscordToken
 public class Discord4jMetricsTest {
 
     @RegisterExtension

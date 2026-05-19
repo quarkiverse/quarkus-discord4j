@@ -95,3 +95,5 @@ You can package your Discord bot into a native executable with GraalVM or Mandre
 You can configure the following properties:
 
 include::includes/quarkus-discord4j.adoc[]
+
+include::includes/quarkus-discord4j-commands.adoc[]
