@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import org.jboss.logging.Logger;
@@ -19,6 +20,7 @@ import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.service.ApplicationService;
 import io.quarkiverse.discord4j.commands.runtime.config.Discord4jCommandsConfig;
 import io.quarkiverse.discord4j.commands.runtime.config.GuildCommandsConfig;
+import io.quarkiverse.discord4j.runtime.Discord4jStarter;
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.unchecked.Unchecked;
 import reactor.core.publisher.Mono;
@@ -31,6 +33,12 @@ public class Discord4jCommandsRegistrar {
 
     @Inject
     ObjectMapper objectMapper;
+
+    @Inject
+    Discord4jStarter starter;
+
+    @Inject
+    Instance<GatewayDiscordClient> gatewayInstance;
 
     private static List<ApplicationCommandRequest> convert(List<String> commands, ObjectMapper objectMapper) {
         return commands.stream()
@@ -49,7 +57,12 @@ public class Discord4jCommandsRegistrar {
         };
     }
 
-    public void register(@Observes StartupEvent startup, GatewayDiscordClient gateway, Discord4jCommandsConfig config) {
+    public void register(@Observes StartupEvent startup, Discord4jCommandsConfig config) {
+        if (!starter.isGatewayInitialized() || starter.isMockMode()) {
+            return;
+        }
+
+        GatewayDiscordClient gateway = gatewayInstance.get();
         List<Publisher<?>> publishers = new ArrayList<>();
         Mono<Long> idMono = gateway.rest().getApplicationId();
         ApplicationService app = gateway.rest().getApplicationService();
@@ -72,27 +85,24 @@ public class Discord4jCommandsRegistrar {
 
         for (Map.Entry<String, List<String>> entry : guildCommands.entrySet()) {
             GuildCommandsConfig commandsConfig = config.guildCommands().get(entry.getKey());
-            if (commandsConfig.guildId() == 0) {
-                LOGGER.debugf("Skipping guild command registration for '%s': guild-id is not configured", entry.getKey());
-                continue;
-            }
             String guildCommandsPath = commandsConfig.path().orElse(globalCommandsPath + '/' + entry.getKey());
+            long guildId = commandsConfig.guildId().orElseThrow(() -> new IllegalStateException(
+                    "quarkus.discord4j.guild-commands." + entry.getKey()
+                            + ".guild-id is required to register commands in guild "
+                            + entry.getKey()));
 
             List<ApplicationCommandRequest> guildCommandRequests = convert(entry.getValue(), objectMapper);
 
             publishers.add(
-                    idMono.flatMapMany(
-                            id -> app.bulkOverwriteGuildApplicationCommand(id, commandsConfig.guildId(),
-                                    guildCommandRequests)));
+                    idMono.flatMapMany(id -> app.bulkOverwriteGuildApplicationCommand(id, guildId, guildCommandRequests)));
 
             if (commandsConfig.deleteMissing()) {
-                publishers.add(idMono.flatMapMany(id -> app.getGuildApplicationCommands(id, commandsConfig.guildId())
+                publishers.add(idMono.flatMapMany(id -> app.getGuildApplicationCommands(id, guildId)
                         .filter(filter(guildCommandRequests))
-                        .delayUntil(command -> app.deleteGuildApplicationCommand(id, commandsConfig.guildId(),
-                                command.id().asLong())))
+                        .delayUntil(command -> app.deleteGuildApplicationCommand(id, guildId, command.id().asLong())))
                         .doOnNext(command -> LOGGER.debugf(
                                 "Deleted guild command %s from guild %s (%s) as it does not have a matching JSON file in %s",
-                                command.name(), entry.getKey(), commandsConfig.guildId(), guildCommandsPath)));
+                                command.name(), entry.getKey(), guildId, guildCommandsPath)));
             }
         }
 

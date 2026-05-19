@@ -6,10 +6,10 @@ import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.GATEWAY_EVEN
 import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.MONO;
 import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.MULTI;
 import static io.quarkiverse.discord4j.deployment.Discord4jDotNames.UNI;
+import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.EVENT_DISPATCHER_ON;
 import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.FLUX_FLAT_MAP;
 import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.FLUX_THEN;
 import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.FUNCTION_APPLY;
-import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.GATEWAY_DISCORD_CLIENT_ON;
 import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.MONO_SUBSCRIBE;
 import static io.quarkiverse.discord4j.deployment.Discord4jMethodDescriptors.MONO_WHEN;
 
@@ -38,11 +38,14 @@ import org.reactivestreams.Publisher;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.EventDispatcher;
 import discord4j.discordjson.possible.PossibleModule;
 import io.netty.channel.EventLoopGroup;
 import io.quarkiverse.discord4j.deployment.spi.GatewayEventSubscriberFlatMapOperatorBuildItem;
 import io.quarkiverse.discord4j.runtime.Discord4jRecorder;
+import io.quarkiverse.discord4j.runtime.Discord4jStarter;
 import io.quarkus.arc.Unremovable;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.AutoAddScopeBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
@@ -82,6 +85,11 @@ public class Discord4jProcessor {
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
+    }
+
+    @BuildStep
+    AdditionalBeanBuildItem starter() {
+        return AdditionalBeanBuildItem.builder().setUnremovable().addBeanClass(Discord4jStarter.class).build();
     }
 
     @BuildStep
@@ -214,13 +222,20 @@ public class Discord4jProcessor {
 
         Supplier<DiscordClient> discordClient = recorder.createDiscordClient(nativeSslConfig.isEnabled(),
                 executor.getExecutorProxy(), eventLoopGroupSupplier);
+
         syntheticBeans.produce(SyntheticBeanBuildItem.configure(GatewayDiscordClient.class)
                 .scope(ApplicationScoped.class)
                 .addQualifier(Default.class)
+                .setRuntimeInit()
                 .supplier(recorder.createGatewayClient(discordClient))
                 .destroyer(Discord4jRecorder.GatewayDiscordClientDestroyer.class)
+                .done());
+
+        syntheticBeans.produce(SyntheticBeanBuildItem.configure(EventDispatcher.class)
+                .scope(ApplicationScoped.class)
+                .addQualifier(Default.class)
                 .setRuntimeInit()
-                .unremovable()
+                .supplier(recorder.createEventDispatcher())
                 .done());
     }
 
@@ -259,14 +274,30 @@ public class Discord4jProcessor {
         ClassCreator cc = ClassCreator.builder().classOutput(output).className(PACKAGE + "GatewayEventSubscriber").build();
         cc.addAnnotation(ApplicationScoped.class);
 
-        MethodCreator mc = cc.getMethodCreator("onStartup", void.class, StartupEvent.class, GatewayDiscordClient.class);
+        FieldCreator starterField = cc.getFieldCreator("starter", PACKAGE + "Discord4jStarter");
+        starterField.setModifiers(Modifier.PROTECTED);
+        starterField.addAnnotation(DotNames.INJECT.toString());
+
+        FieldCreator eventDispatcherField = cc.getFieldCreator("eventDispatcher", EventDispatcher.class.getName());
+        eventDispatcherField.setModifiers(Modifier.PROTECTED);
+        eventDispatcherField.addAnnotation(DotNames.INJECT.toString());
+
+        MethodCreator mc = cc.getMethodCreator("onStartup", void.class, StartupEvent.class);
         mc.getParameterAnnotations(0).addAnnotation(DotNames.OBSERVES.toString());
+
+        ResultHandle starter = mc.readInstanceField(starterField.getFieldDescriptor(), mc.getThis());
+        ResultHandle isInitialized = mc.invokeVirtualMethod(
+                MethodDescriptor.ofMethod(PACKAGE + "Discord4jStarter", "isGatewayInitialized", boolean.class),
+                starter);
+        mc.ifFalse(isInitialized).trueBranch().returnValue(mc.loadNull());
+
+        ResultHandle eventDispatcher = mc.readInstanceField(eventDispatcherField.getFieldDescriptor(), mc.getThis());
 
         ResultHandle publishers = mc.newArray(Publisher.class, subscriberOperators.size());
         for (int i = 0; i < subscriberOperators.size(); i++) {
             GatewayEventSubscriberFlatMapOperatorBuildItem operator = subscriberOperators.get(i);
 
-            ResultHandle flux = mc.invokeVirtualMethod(GATEWAY_DISCORD_CLIENT_ON, mc.getMethodParam(1),
+            ResultHandle flux = mc.invokeInterfaceMethod(EVENT_DISPATCHER_ON, eventDispatcher,
                     mc.loadClass(operator.getEventClassName()));
             flux = mc.invokeVirtualMethod(FLUX_FLAT_MAP, flux, operator.getFlatMapArgCreator().apply(mc));
             mc.writeArrayValue(publishers, i, mc.invokeVirtualMethod(FLUX_THEN, flux));

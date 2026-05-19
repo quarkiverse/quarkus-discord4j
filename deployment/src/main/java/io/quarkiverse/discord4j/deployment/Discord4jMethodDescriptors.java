@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
 
-import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.EventDispatcher;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
 import io.quarkus.gizmo.MethodDescriptor;
@@ -22,12 +22,12 @@ import reactor.core.publisher.Mono;
 public class Discord4jMethodDescriptors {
     public static final MethodDescriptor ARC_CONTAINER_INSTANCE = MethodDescriptor.ofMethod(ArcContainer.class, "instance",
             InstanceHandle.class, Class.class, Annotation[].class);
+    public static final MethodDescriptor FUNCTION_APPLY = MethodDescriptor.ofMethod(Function.class, "apply", Object.class,
+            Object.class);
     public static final MethodDescriptor FLUX_FLAT_MAP = MethodDescriptor.ofMethod(Flux.class, "flatMap", Flux.class,
             Function.class);
     public static final MethodDescriptor FLUX_THEN = MethodDescriptor.ofMethod(Flux.class, "then", Mono.class);
-    public static final MethodDescriptor FUNCTION_APPLY = MethodDescriptor.ofMethod(Function.class, "apply", Object.class,
-            Object.class);
-    public static final MethodDescriptor GATEWAY_DISCORD_CLIENT_ON = MethodDescriptor.ofMethod(GatewayDiscordClient.class, "on",
+    public static final MethodDescriptor EVENT_DISPATCHER_ON = MethodDescriptor.ofMethod(EventDispatcher.class, "on",
             Flux.class, Class.class);
     public static final MethodDescriptor INSTANCE_HANDLE_GET = MethodDescriptor.ofMethod(InstanceHandle.class, "get",
             Object.class);

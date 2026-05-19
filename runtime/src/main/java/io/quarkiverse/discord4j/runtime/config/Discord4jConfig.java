@@ -7,6 +7,7 @@ import discord4j.gateway.intent.Intent;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
 @ConfigMapping(prefix = "quarkus.discord4j")
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
@@ -31,6 +32,13 @@ public interface Discord4jConfig {
      * The strategy to use for retrieving Discord entities. Default is {@code cache-fallback-rest}.
      */
     Optional<String> entityRetrievalStrategy();
+
+    /**
+     * Whether mock mode is enabled. When enabled, a standalone {@code EventDispatcher} is created
+     * instead of connecting to the Discord Gateway. Useful for testing event handlers without a real bot token.
+     */
+    @WithDefault("false")
+    boolean mockEnabled();
 
     /**
      * Sharding configuration.

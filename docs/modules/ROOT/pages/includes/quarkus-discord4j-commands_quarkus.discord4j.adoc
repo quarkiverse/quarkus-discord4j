@@ -1,0 +1,158 @@
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j-commands_quarkus-discord4j-global-commands-overwrite-on-start]] [.property-path]##link:#quarkus-discord4j-commands_quarkus-discord4j-global-commands-overwrite-on-start[`+++quarkus.discord4j.global-commands.overwrite-on-start+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.discord4j.global-commands.overwrite-on-start+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Whether to serialize and register the JSON files found in `path` as global commands on startup.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_OVERWRITE_ON_START+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_OVERWRITE_ON_START+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j-commands_quarkus-discord4j-global-commands-path]] [.property-path]##link:#quarkus-discord4j-commands_quarkus-discord4j-global-commands-path[`+++quarkus.discord4j.global-commands.path+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.discord4j.global-commands.path+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+The path to the JSON files of the global commands.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`+++META-INF/commands+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j-commands_quarkus-discord4j-global-commands-delete-missing]] [.property-path]##link:#quarkus-discord4j-commands_quarkus-discord4j-global-commands-delete-missing[`+++quarkus.discord4j.global-commands.delete-missing+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.discord4j.global-commands.delete-missing+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Whether to delete registered global commands whose JSON representation is not found in `path`.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_DELETE_MISSING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GLOBAL_COMMANDS_DELETE_MISSING+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-overwrite-on-start]] [.property-path]##link:#quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-overwrite-on-start[`+++quarkus.discord4j.guild-commands."guild-commands".overwrite-on-start+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.discord4j.guild-commands."guild-commands".overwrite-on-start+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Whether to serialize and register the JSON files found in `path` as commands in this guild on startup.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__OVERWRITE_ON_START+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__OVERWRITE_ON_START+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-path]] [.property-path]##link:#quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-path[`+++quarkus.discord4j.guild-commands."guild-commands".path+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.discord4j.guild-commands."guild-commands".path+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+The path to the JSON files of the guild commands. By default, the path is `<global-commands.path> {plus} / {plus} <config-name>`.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-delete-missing]] [.property-path]##link:#quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-delete-missing[`+++quarkus.discord4j.guild-commands."guild-commands".delete-missing+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.discord4j.guild-commands."guild-commands".delete-missing+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Whether to delete commands registered in this guild whose JSON representation is not found in `path`.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__DELETE_MISSING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__DELETE_MISSING+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-guild-id]] [.property-path]##link:#quarkus-discord4j-commands_quarkus-discord4j-guild-commands-guild-commands-guild-id[`+++quarkus.discord4j.guild-commands."guild-commands".guild-id+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.discord4j.guild-commands."guild-commands".guild-id+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+The ID of the guild. Required if you intend to register commands in this guild.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__GUILD_ID+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_DISCORD4J_GUILD_COMMANDS__GUILD_COMMANDS__GUILD_ID+++`
+endif::add-copy-button-to-env-var[]
+--
+|long
+|
+
+|===
+
