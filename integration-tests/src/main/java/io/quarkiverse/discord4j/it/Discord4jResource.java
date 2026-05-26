@@ -19,17 +19,26 @@ package io.quarkiverse.discord4j.it;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
-import discord4j.core.GatewayDiscordClient;
+import io.quarkiverse.discord4j.runtime.Discord4jStarter;
 
 @Path("/discord-bot")
 public class Discord4jResource {
 
     @Inject
-    GatewayDiscordClient gateway;
+    Discord4jStarter starter;
 
     @GET
-    public boolean assertNotNull() {
-        return gateway != null;
+    public boolean isGatewayInitialized() {
+        return starter.isGatewayInitialized();
+    }
+
+    @GET
+    @Path("/mock")
+    @Produces(MediaType.TEXT_PLAIN)
+    public boolean isMockMode() {
+        return starter.isMockMode();
     }
 }

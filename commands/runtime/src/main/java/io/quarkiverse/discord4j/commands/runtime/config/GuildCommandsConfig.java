@@ -1,6 +1,7 @@
 package io.quarkiverse.discord4j.commands.runtime.config;
 
 import java.util.Optional;
+import java.util.OptionalLong;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithDefault;
@@ -26,8 +27,7 @@ public interface GuildCommandsConfig {
     boolean deleteMissing();
 
     /**
-     * The ID of the guild.
+     * The ID of the guild. Required if you intend to register commands in this guild.
      */
-    @WithDefault("0")
-    long guildId();
+    OptionalLong guildId();
 }

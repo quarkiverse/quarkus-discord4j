@@ -31,8 +31,19 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>io.quarkiverse.discord4j</groupId>
+      <artifactId>quarkus-discord4j-testing</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

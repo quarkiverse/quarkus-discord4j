@@ -23,12 +23,14 @@ import discord4j.core.object.entity.Message;
 import discord4j.discordjson.json.MessageData;
 import discord4j.gateway.ShardInfo;
 import io.quarkiverse.discord4j.GatewayEvent;
+import io.quarkiverse.discord4j.testing.EnabledWithDiscordToken;
 import io.quarkus.test.QuarkusUnitTest;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@EnabledWithDiscordToken
 public class Discord4jGatewayEventListenerTest {
 
     @RegisterExtension

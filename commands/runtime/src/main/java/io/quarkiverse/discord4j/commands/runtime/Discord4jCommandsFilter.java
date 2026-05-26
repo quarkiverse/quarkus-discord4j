@@ -20,10 +20,14 @@ public class Discord4jCommandsFilter {
 
     public boolean test(InteractionCreateEvent event, String name, Optional<String> guild, Optional<String> subCommandGroup,
             Optional<String> subCommand) {
-        if (!guild.flatMap(value -> Optional.ofNullable(config.guildCommands().get(value)))
-                .map(i -> Snowflake.of(i.guildId()))
-                .equals(event.getInteraction().getGuildId())) {
-            return false;
+        Optional<String> guildName = guild.filter(value -> !value.isBlank());
+        if (guildName.isPresent()) {
+            Optional<Snowflake> expectedGuildId = guildName
+                    .flatMap(value -> Optional.ofNullable(config.guildCommands().get(value)))
+                    .flatMap(commandsConfig -> commandsConfig.guildId().stream().mapToObj(Snowflake::of).findFirst());
+            if (!expectedGuildId.equals(event.getInteraction().getGuildId())) {
+                return false;
+            }
         }
 
         return event.getInteraction().getCommandInteraction()

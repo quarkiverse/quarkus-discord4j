@@ -1,7 +1,6 @@
 package io.quarkiverse.discord4j.commands.deployment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 
@@ -11,6 +10,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,9 +24,12 @@ import discord4j.gateway.ShardInfo;
 import io.quarkiverse.discord4j.commands.Command;
 import io.quarkiverse.discord4j.commands.SubCommand;
 import io.quarkiverse.discord4j.commands.SubCommandGroup;
+import io.quarkiverse.discord4j.testing.EnabledWithDiscordToken;
 import io.quarkus.test.QuarkusUnitTest;
 import reactor.core.publisher.Mono;
 
+@EnabledWithDiscordToken
+@EnabledIfEnvironmentVariable(named = "QUARKUS_DISCORD4J_GUILD_COMMANDS_TEST_GUILD_ID", matches = "\\d+", disabledReason = "Requires a real Discord guild ID")
 public class Discord4jCommandsTest {
 
     @RegisterExtension
@@ -48,9 +51,6 @@ public class Discord4jCommandsTest {
 
     @AfterEach
     void cleanup() {
-        if (guildId == 0) {
-            return;
-        }
         DiscordClient rest = gateway.rest();
         rest.getApplicationId().flatMap(id -> rest.getApplicationService()
                 .getGuildApplicationCommands(id, guildId)
@@ -67,11 +67,11 @@ public class Discord4jCommandsTest {
 
     @Test
     public void commandTest() throws IOException {
-        assumeTrue(guildId != 0, "Skipping command test: no real guild ID configured");
         InteractionData data = objectMapper.readValue(
                 Thread.currentThread().getContextClassLoader().getResource("interaction-create.json"),
                 InteractionData.class);
         data = InteractionData.builder().from(data).guildId(String.format("%d", guildId)).build();
+
         gateway.getEventDispatcher()
                 .publish(new ChatInputInteractionEvent(gateway, ShardInfo.create(0, 1), new Interaction(gateway, data)));
 

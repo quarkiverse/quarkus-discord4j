@@ -12,9 +12,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import io.quarkiverse.discord4j.GatewayEvent;
+import io.quarkiverse.discord4j.testing.EnabledWithDiscordToken;
 import io.quarkus.test.QuarkusDevModeTest;
 import reactor.core.publisher.Mono;
 
+@EnabledWithDiscordToken
 public class Discord4jDevModeTest {
 
     @RegisterExtension

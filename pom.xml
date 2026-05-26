@@ -11,11 +11,12 @@
   <version>999-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Quarkus - Discord4J - Parent</name>
-  <modules>
-    <module>deployment</module>
-    <module>runtime</module>
-    <module>commands</module>
-  </modules>
+    <modules>
+        <module>deployment</module>
+        <module>runtime</module>
+        <module>commands</module>
+        <module>testing</module>
+    </modules>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</connection>
     <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</developerConnection>
