@@ -125,6 +125,13 @@ public class Discord4jRecorder {
         return new Supplier<>() {
             @Override
             public GatewayDiscordClient get() {
+                if (c.mock().enabled()) {
+                    throw new IllegalStateException(
+                            "GatewayDiscordClient is not available when quarkus.discord4j.mock.enabled=true. "
+                                    + "Inject EventDispatcher instead, or use the quarkus-discord4j-testing module "
+                                    + "to obtain a mock gateway.");
+                }
+
                 GatewayBootstrap<GatewayOptions> bootstrap = discordClientSupplier.get().gateway();
                 bootstrap.setGatewayReactorResources(GatewayReactorResources::new);
                 bootstrap.setVoiceReactorResources(reactorResources -> VoiceReactorResources.builder(reactorResources)
@@ -189,12 +196,28 @@ public class Discord4jRecorder {
         };
     }
 
+    public Supplier<EventDispatcher> createEventDispatcher() {
+        Discord4jConfig c = config.getValue();
+        return new Supplier<>() {
+            @Override
+            public EventDispatcher get() {
+                if (c.mock().enabled()) {
+                    return EventDispatcher.builder().build();
+                }
+                GatewayDiscordClient gateway = Arc.container().instance(GatewayDiscordClient.class).get();
+                return gateway.getEventDispatcher();
+            }
+        };
+    }
+
     public static class GatewayDiscordClientDestroyer implements BeanDestroyer<GatewayDiscordClient> {
 
         @Override
         public void destroy(GatewayDiscordClient instance, CreationalContext<GatewayDiscordClient> context,
                 Map<String, Object> params) {
-            instance.logout().block();
+            if (instance != null) {
+                instance.logout().block();
+            }
         }
     }
 }

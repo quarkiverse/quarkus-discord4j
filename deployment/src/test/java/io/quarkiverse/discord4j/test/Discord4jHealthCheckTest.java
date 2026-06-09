@@ -9,8 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.discord4j.runtime.health.Discord4jHealthCheck;
+import io.quarkiverse.discord4j.testing.EnabledWithDiscordToken;
 import io.quarkus.test.QuarkusUnitTest;
 
+@EnabledWithDiscordToken
 public class Discord4jHealthCheckTest {
 
     @RegisterExtension

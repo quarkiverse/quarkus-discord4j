@@ -15,6 +15,7 @@
     <module>deployment</module>
     <module>runtime</module>
     <module>commands</module>
+    <module>testing</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-discord4j.git</connection>
