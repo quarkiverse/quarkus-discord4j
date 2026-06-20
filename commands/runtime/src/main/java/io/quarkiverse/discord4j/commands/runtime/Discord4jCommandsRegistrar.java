@@ -46,14 +46,20 @@ public class Discord4jCommandsRegistrar {
                 .collect(Collectors.toList());
     }
 
-    private static Predicate<ApplicationCommandData> filter(List<ApplicationCommandRequest> commands) {
-        return c -> {
-            for (ApplicationCommandRequest command : commands) {
-                if (c.name().equals(command.name()) && c.type().equals(command.type())) {
-                    return true;
+    /**
+     * Builds a predicate that selects registered Discord commands which have no matching local JSON definition, i.e. the
+     * commands that should be deleted when {@code delete-missing} is enabled. A command matches a local definition when
+     * both its name and type are equal, so the predicate returns {@code true} (delete) only for commands absent from
+     * {@code localCommands}.
+     */
+    static Predicate<ApplicationCommandData> filterMissing(List<ApplicationCommandRequest> localCommands) {
+        return discordCommand -> {
+            for (ApplicationCommandRequest localCommand : localCommands) {
+                if (discordCommand.name().equals(localCommand.name()) && discordCommand.type().equals(localCommand.type())) {
+                    return false;
                 }
             }
-            return false;
+            return true;
         };
     }
 
@@ -75,7 +81,7 @@ public class Discord4jCommandsRegistrar {
 
             if (config.globalCommands().deleteMissing()) {
                 publishers.add(idMono.flatMapMany(id -> app.getGlobalApplicationCommands(id)
-                        .filter(filter(globalCommandRequests))
+                        .filter(filterMissing(globalCommandRequests))
                         .delayUntil(command -> app.deleteGlobalApplicationCommand(id, command.id().asLong())))
                         .doOnNext(command -> LOGGER.debugf(
                                 "Deleted global command %s as it does not have a matching JSON file in %s",
@@ -98,7 +104,7 @@ public class Discord4jCommandsRegistrar {
 
             if (commandsConfig.deleteMissing()) {
                 publishers.add(idMono.flatMapMany(id -> app.getGuildApplicationCommands(id, guildId)
-                        .filter(filter(guildCommandRequests))
+                        .filter(filterMissing(guildCommandRequests))
                         .delayUntil(command -> app.deleteGuildApplicationCommand(id, guildId, command.id().asLong())))
                         .doOnNext(command -> LOGGER.debugf(
                                 "Deleted guild command %s from guild %s (%s) as it does not have a matching JSON file in %s",

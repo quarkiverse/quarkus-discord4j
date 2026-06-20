@@ -1,8 +1,10 @@
 package io.quarkiverse.discord4j.test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.time.Duration;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -24,6 +26,7 @@ public class Discord4jMetricsTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
+            .withApplicationRoot(jar -> jar.addClass(TestMeterRegistryProducer.class))
             .withConfigurationResource("metrics-application.properties");
 
     @Inject
@@ -43,12 +46,15 @@ public class Discord4jMetricsTest {
     public void testMetrics() {
         List<Guild> guilds = gateway.getGuilds().collectList().block();
         assertNotNull(guilds);
-        assertEquals(guilds.size(), gauge(Metrics.GUILDS_METRIC_NAME).intValue());
+        await().atMost(Duration.ofSeconds(10))
+                .untilAsserted(() -> assertEquals(guilds.size(), gauge(Metrics.GUILDS_METRIC_NAME).intValue()));
 
         List<VoiceConnection> voiceConnections = gateway.getGuilds().flatMap(Guild::getVoiceConnection).collectList()
                 .block();
         assertNotNull(voiceConnections);
-        assertEquals(voiceConnections.size(), gauge(Metrics.VOICE_CONNECTIONS_METRIC_NAME).intValue());
+        await().atMost(Duration.ofSeconds(10))
+                .untilAsserted(() -> assertEquals(voiceConnections.size(),
+                        gauge(Metrics.VOICE_CONNECTIONS_METRIC_NAME).intValue()));
     }
 
     private Double gauge(String name) {
