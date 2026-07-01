@@ -22,7 +22,7 @@ Add the `quarkus-discord4j-commands` artifact to your Quarkus app:
 
 Before you can start listening for commands in code, you first need to define your application commands and register them in Discord so they can be used. The easiest way to do this is by defining your commands using JSON. Quarkus Discord Bot will automatically serialize and register the JSON files found in `META-INF/commands` and subdirectories as application commands (when configured to do so).
 
-TIP: Discord supports two types of application commands: global commands and guild commands. Global commands take an hour to propagate after being registered, so it's recommended to register your commands as guild commands while you're developing.
+TIP: Discord supports two types of application commands: global commands and guild commands. Guild commands update instantly, so it's recommended to register your commands as guild commands while you're developing for faster iteration.
 
 Let's create a guild command by creating the following JSON file in `META-INF/commands/test`:
 [source,json]
