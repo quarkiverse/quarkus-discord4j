@@ -54,6 +54,14 @@ class Discord4jCommandsFilterTest {
         assertFalse(filter.test(event, "ping", Optional.of("test"), Optional.empty(), Optional.empty()));
     }
 
+    @Test
+    void nonMatchingCommandNameIsRejected() {
+        Discord4jCommandsFilter filter = filter(Map.of());
+        InteractionCreateEvent event = interaction(Optional.of(GUILD), "action");
+
+        assertFalse(filter.test(event, "status", Optional.of(""), Optional.empty(), Optional.empty()));
+    }
+
     private Discord4jCommandsFilter filter(Map<String, GuildCommandsConfig> guildCommands) {
         Discord4jCommandsConfig config = mock(Discord4jCommandsConfig.class);
         when(config.guildCommands()).thenReturn(guildCommands);

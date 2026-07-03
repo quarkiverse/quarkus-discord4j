@@ -35,6 +35,6 @@ public class Discord4jCommandsFilter {
                 .map(interaction -> subCommandGroup.map(s -> interaction.getOption(s)
                         .flatMap(option -> subCommand.flatMap(option::getOption)).isPresent())
                         .orElseGet(() -> subCommand.map(s -> interaction.getOption(s).isPresent()).orElse(true)))
-                .get();
+                .orElse(false);
     }
 }
